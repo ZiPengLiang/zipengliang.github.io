@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/"># 事件循环---Event Loop</a>
+      <a class="p-name article-title" href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/">事件循环---Event Loop</a>
     </h1>
   
 
@@ -107,7 +107,7 @@
 <p>由上图可知，一个方法执行会向执行栈中加入这个方法的执行环境，在这个执行环境中还可以调用其他方法，甚至是自己，其结果不过是在执行栈中再添加一个执行环境。这个过程可以是无限进行下去的，除非发生了栈溢出，即超过了所能使用内存的最大值。</p>
 <p>当然上述所说的是同步代码的执行。接下就是异步的了</p>
 <h5 id="（2）、事件队列"><a href="#（2）、事件队列" class="headerlink" title="（2）、事件队列"></a>（2）、事件队列</h5><p>js引擎在遇到一个异步事件后并不会等待其返回结果，而是将这个事件挂起，继续执行执行栈中的其他任务。当一个异步事件返回结果后，js会将这个事件加入与当前执行栈不同的另一个队列中，即事件队列。被放进事件队列中不会立即执行其回调，而是等待当前执行栈中的所有任务都执行完毕，待主线程处于闲置状态是，主线程会去查看事件队列中是否有任务。如果有，那么主线程会从中取出排在第一位的事件，并把这个事件对应的回调函数存进执行栈中，然后执行其中的同步代码，如此反复，就形成了一个无限的循环，这就是事件循环</p>
-<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop%5C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
 <p>图中的stack表示我们所说的执行栈，web apis则是代表一些异步事件，而callback queue即事件队列。</p>
 <h4 id="2、macro-task与micro-task"><a href="#2、macro-task与micro-task" class="headerlink" title="2、macro task与micro task"></a>2、macro task与micro task</h4><p>以上的事件循环过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。</p>
 <p>以下事件属于宏任务：</p>
@@ -186,7 +186,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" data-id="cklj86tu30001kcw4gt4zglaa" data-title="# 事件循环---Event Loop" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" data-id="cklj86tu30001kcw4gt4zglaa" data-title="事件循环---Event Loop" class="article-share-link">Share</a>
       
       
       
@@ -567,7 +567,7 @@
       <ul>
         
           <li>
-            <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/"># 事件循环---Event Loop</a>
+            <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/">事件循环---Event Loop</a>
           </li>
         
           <li>
