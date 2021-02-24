@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title># 事件循环---Event Loop | ZiPeng</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="前言​    javascript是一门单线程的非阻塞的脚本语言。最基本的用途就是与浏览器交互。 单线程–基于该用途，使得javascript不可能成为多线程，因为在浏览器中，我们需要对各种各样的dom操作，单线程确保了一次只能对dom进行一次操作，假若javascript是一门多线程语言，就有可能遇到多个线程对同一个dom进行操作，一个往其中添加事件，一个删除了这个dom，这时就会出现bug。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="# 事件循环---Event Loop">
+<meta property="og:url" content="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/index.html">
+<meta property="og:site_name" content="ZiPeng">
+<meta property="og:description" content="前言​    javascript是一门单线程的非阻塞的脚本语言。最基本的用途就是与浏览器交互。 单线程–基于该用途，使得javascript不可能成为多线程，因为在浏览器中，我们需要对各种各样的dom操作，单线程确保了一次只能对dom进行一次操作，假若javascript是一门多线程语言，就有可能遇到多个线程对同一个dom进行操作，一个往其中添加事件，一个删除了这个dom，这时就会出现bug。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E6%A0%88gif.webp">
+<meta property="og:image" content="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop%5C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg">
+<meta property="article:published_time" content="2021-02-24T09:08:53.000Z">
+<meta property="article:modified_time" content="2021-02-24T09:18:23.654Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E6%A0%88gif.webp">
+  
+    <link rel="alternate" href="/atom.xml" title="ZiPeng" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">ZiPeng</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-事件循环-Event-Loop" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" class="article-date">
+  <time class="dt-published" datetime="2021-02-24T09:08:53.000Z" itemprop="datePublished">2021-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      # 事件循环---Event Loop
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    javascript是一门单线程的非阻塞的脚本语言。最基本的用途就是与浏览器交互。</p>
+<p>单线程–基于该用途，使得javascript不可能成为多线程，因为在浏览器中，我们需要对各种各样的dom操作，单线程确保了一次只能对dom进行一次操作，假若javascript是一门多线程语言，就有可能遇到多个线程对同一个dom进行操作，一个往其中添加事件，一个删除了这个dom，这时就会出现bug。</p>
+<p>javascript的另一个特点就是非阻塞，至于javascript是如何做到非阻塞的呢，答案就是本文要记录的—event loop（事件循环）</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h4 id="1、执行栈与事件队列"><a href="#1、执行栈与事件队列" class="headerlink" title="1、执行栈与事件队列"></a>1、执行栈与事件队列</h4><p>当javascript代码执行的时候会将不同的变量存于内存中的不同位置：堆（heap）和栈（stack）中来加以区分。</p>
+<p>堆(heap)：存放着一些对象</p>
+<p>栈(stack)：存放着一些基础类型变量以及对象的指针</p>
+<p><strong>注意：执行栈和上面的栈的意义有所不同</strong></p>
+<h5 id="（1）、执行栈"><a href="#（1）、执行栈" class="headerlink" title="（1）、执行栈"></a>（1）、执行栈</h5><p>当我们在调用一个方法是，js会生成一个与这个方法对应的执行环境（context），也叫执行上下文。这个执行环境中存在着这个方法的私有作用域、上层作用域的指向、方法的参数、作用域中定义的变量以及这个作用域的this对象。而当一系列方法被依次调用的时候，由于js是单线程的，一次只能执行一个方法，于是这些方法被排在了一个单独的地方—执行栈。</p>
+<p>当一个js被第一次执行的时候，js引擎会解析这段代码，并将其中的同步代码按照执行顺序加入执行栈中，然后从头开始执行。如果这个执行的是一个方法，那么js会往执行栈中添加这个方法的执行环境，然后进入这个执行环境继续执行其中代码。当这个执行环境中的代码执行完毕并返回结果后，js会推出这个执行环境并将该执行环境销毁，回到上一个方法的执行环境，这个过程会反复执行，知道执行栈中的代码全部执行完毕。</p>
+<p>由下图显示，其中的global就是初次运行脚本时向执行栈中加入的代码：</p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E6%A0%88gif.webp" alt="栈gif"></p>
+<p>由上图可知，一个方法执行会向执行栈中加入这个方法的执行环境，在这个执行环境中还可以调用其他方法，甚至是自己，其结果不过是在执行栈中再添加一个执行环境。这个过程可以是无限进行下去的，除非发生了栈溢出，即超过了所能使用内存的最大值。</p>
+<p>当然上述所说的是同步代码的执行。接下就是异步的了</p>
+<h5 id="（2）、事件队列"><a href="#（2）、事件队列" class="headerlink" title="（2）、事件队列"></a>（2）、事件队列</h5><p>js引擎在遇到一个异步事件后并不会等待其返回结果，而是将这个事件挂起，继续执行执行栈中的其他任务。当一个异步事件返回结果后，js会将这个事件加入与当前执行栈不同的另一个队列中，即事件队列。被放进事件队列中不会立即执行其回调，而是等待当前执行栈中的所有任务都执行完毕，待主线程处于闲置状态是，主线程会去查看事件队列中是否有任务。如果有，那么主线程会从中取出排在第一位的事件，并把这个事件对应的回调函数存进执行栈中，然后执行其中的同步代码，如此反复，就形成了一个无限的循环，这就是事件循环</p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop%5C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
+<p>图中的stack表示我们所说的执行栈，web apis则是代表一些异步事件，而callback queue即事件队列。</p>
+<h4 id="2、macro-task与micro-task"><a href="#2、macro-task与micro-task" class="headerlink" title="2、macro task与micro task"></a>2、macro task与micro task</h4><p>以上的事件循环过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。</p>
+<p>以下事件属于宏任务：</p>
+<ul>
+<li><code>setInterval()</code></li>
+<li><code>setTimeout()</code></li>
+</ul>
+<p>以下事件属于微任务：</p>
+<ul>
+<li><code>new Promise()</code></li>
+<li><code>new MutaionObserver()</code></li>
+</ul>
+<p>前面我们介绍过，在一个事件循环中，异步事件返回结果后会被放到一个任务队列中。然而，根据这个异步事件的类型，这个事件实际上会被对应的宏任务队列或者微任务队列中去。并且在当前执行栈为空的时候，主线程会 查看微任务队列是否有事件存在。如果不存在，那么再去宏任务队列中取出一个事件并把对应的回到加入当前执行栈；如果存在，则会依次执行队列中事件对应的回调，直到微任务队列为空，然后去宏任务队列中取出最前面的一个事件，把对应的回调加入当前执行栈…如此反复，进入循环。</p>
+<p>我们只需记住<strong>当当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次事件循环中，微任务永远在宏任务之前执行</strong>。</p>
+<p>举个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve,reject</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">    resolve(<span class="number">3</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(val);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//2</span></span><br><span class="line"><span class="comment">//3</span></span><br><span class="line"><span class="comment">//1</span></span><br></pre></td></tr></table></figure>
+
+<p>原文来源：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33058983">详解JavaScript中的Event Loop（事件循环）机制</a></p>
+<p>事件循环补充</p>
+<p>宏任务(macro-task)：包括整体代码script、setTimeout、setInterval、MessageChannel、postMessage、setImmediate。</p>
+<p> 微任务(micro-task)：Promise、process.nextTick、MutationObsever。</p>
+<p>循环机制–不同类型的任务会进入对应的Event Queue，比如setTimeout和setInterval会进入相同(宏任务)的Event Queue。而Promise和process.nextTick会进入相同(微任务)的Event Queue。</p>
+<p>大致执行顺序</p>
+<ol>
+<li>「宏任务」、「微任务」都是队列，一段代码执行时，会先执行宏任务中的同步代码。</li>
+<li>进行第一轮事件循环的时候会把全部的js脚本当成一个宏任务来运行。</li>
+<li>如果执行中遇到setTimeout之类宏任务，那么就把这个setTimeout内部的函数推入「宏任务的队列」中，<strong>下一轮宏任务</strong>执行时调用。</li>
+<li>如果执行中遇到 promise.then() 之类的微任务，就会推入到「<strong>当前宏任务</strong>的微任务队列」中，在<strong>本轮宏任务</strong>的同步代码都执行完成后，依次执行所有的微任务。</li>
+<li>第一轮事件循环中当执行完全部的同步脚本以及微任务队列中的事件，这一轮事件循环就结束了，开始第二轮事件循环。</li>
+<li>第二轮事件循环同理先执行同步脚本，遇到其他宏任务代码块继续追加到「宏任务的队列」中，遇到微任务，就会推入到「当前宏任务的微任务队列」中，在本轮宏任务的同步代码执行都完成后，依次执行当前所有的微任务。</li>
+<li>开始第三轮，循环往复…</li>
+</ol>
+<p>例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//setTimeout -- 宏任务 暂不执行--推进宏任务队列中</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// new Promise --立即执行 promise.then函数分配到微任务中</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>) <span class="comment">// 同步任务</span></span><br><span class="line">    resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//顺序执行</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="comment">//这里有留意的是Promise.then()里面的方法才会被推进微任务队列中，所以执行顺序为1-2-3-4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="async-await"><a href="#async-await" class="headerlink" title="async/await"></a>async/await</h3><p>关键来了</p>
+<p>当函数中运用到async/await后事件循环就变得不同了</p>
+<p>在分析事件循环前先讲讲什么是async/await</p>
+<h4 id="async-await是什么？"><a href="#async-await是什么？" class="headerlink" title="async/await是什么？"></a>async/await是什么？</h4><p>我们创建了 promise 但不能同步等待它执行完成。我们只能通过 then 传一个回调函数这样很容易再次陷入 promise 的回调地狱。</p>
+<p>实际上，async/await 在底层转换成了 promise 和 then 回调函数。也就是说，这是 promise 的语法糖。每次我们使用 await, **<u>解释器都创建一个 promise 对象，然后把剩下的 async 函数中的操作放到 then 回调函数中</u>**。async/await 的实现，离不开 Promise。从字面意思来理解，async 是“异步”的简写，而 await 是 async wait 的简写可以认为是等待异步方法执行完成。</p>
+<p>举个例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aa</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> asyFn = <span class="keyword">async</span> ()=&gt;&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="number">666</span>)</span><br><span class="line">	<span class="keyword">await</span> aa()</span><br><span class="line">    <span class="comment">//await后面的操作全放在了promise的then函数中了</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">77</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//等价于</span></span><br><span class="line"><span class="keyword">let</span> proFn = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="number">666</span>)</span><br><span class="line">        resolve()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line">proFn().then(<span class="function"><span class="params">res</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">77</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="async-await用来干什么？"><a href="#async-await用来干什么？" class="headerlink" title="async/await用来干什么？"></a>async/await用来干什么？</h4><p>用来优化 promise 的回调问题，被称作是异步的终极解决方案。 – 解决回掉地狱</p>
+<h4 id="async-await内部做了什么？"><a href="#async-await内部做了什么？" class="headerlink" title="async/await内部做了什么？"></a>async/await内部做了什么？</h4><p>async 函数会返回一个 Promise 对象，如果在函数中 return 一个直接量（普通变量），async 会把这个直接量通过 Promise.resolve() 封装成 Promise 对象。如果你返回了promise那就以你返回的promise为准。 await 是在等待，等待运行的结果也就是返回值。await后面通常是一个异步操作（promise），但是这不代表 await 后面只能跟异步操作 await 后面实际是可以接普通函数调用或者直接量的。</p>
+<h4 id="await的等待机制？"><a href="#await的等待机制？" class="headerlink" title="await的等待机制？"></a>await的等待机制？</h4><p>如果 await 后面跟的不是一个 Promise，那 await 后面表达式的运算结果就是它等到的东西；如果 await 后面跟的是一个 Promise 对象，await 它会“阻塞”后面的代码，等着 Promise 对象 resolve，然后得到 resolve 的值作为 await 表达式的运算结果。但是此“阻塞”非彼“阻塞”这就是 await 必须用在 async 函数中的原因。async 函数调用不会造成“阻塞”，<strong>它内部所有的“阻塞”都被封装在一个 Promise 对象中异步执行。（这里的阻塞理解成异步等待更合理）</strong></p>
+<h4 id="async-await在使用过程中有什么规定？"><a href="#async-await在使用过程中有什么规定？" class="headerlink" title="async/await在使用过程中有什么规定？"></a>async/await在使用过程中有什么规定？</h4><p>每个 async 方法都返回一个 promise 对象。await 只能出现在 async 函数中。</p>
+<h4 id="async-await-在什么场景使用？"><a href="#async-await-在什么场景使用？" class="headerlink" title="async/await 在什么场景使用？"></a>async/await 在什么场景使用？</h4><p>单一的 Promise 链并不能发现 async/await 的优势，但是如果需要处理由多个 Promise 组成的 then 链的时候，优势就能体现出来了（Promise 通过 then 链来解决多层回调的问题，现在又用 async/await 来进一步优化它）。</p>
+<h4 id="async-await的运行机制"><a href="#async-await的运行机制" class="headerlink" title="async/await的运行机制"></a>async/await的运行机制</h4><p>大致方法：</p>
+<ol>
+<li>async定义的是一个Promise函数和普通函数一样只要不调用就不会进入事件队列。</li>
+<li>async内部如果没有主动return Promise，那么async会把函数的返回值用Promise包装。</li>
+<li>await关键字必须出现在async函数中，await后面不是必须要跟一个异步操作，也可以是一个普通表达式。</li>
+<li>遇到await关键字，await右边的语句会被立即执行然后<strong>await下面的代码进入等待状态，等待await得到结果</strong>。 await后面如果不是 promise 对象, <strong>await会阻塞后面的代码，先执行async外面的同步代码，同步代码执行完，再回到async内部</strong>，把这个非promise的东西，作为 await表达式的结果。 <strong>await后面如果是 promise 对象，await 也会暂停async后面的代码，先执行async外面的同步代码</strong>，等着 Promise 对象 fulfilled，然后把 resolve 的参数作为 await 表达式的运算结果。</li>
+</ol>
+<p>例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> async2()</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line">async1()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//最终结果</span></span><br><span class="line"><span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>-<span class="number">5</span>-<span class="number">6</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>6是宏任务在下一轮事件循环执行</li>
+<li>先同步输出1，然后调用了async1()，输出2。</li>
+<li>await async2() 会先运行async2()，5进入等待状态。</li>
+<li>输出3，这个时候先执行async函数外的同步代码输出4。</li>
+<li>最后await拿到等待的结果继续往下执行输出5。</li>
+<li>进入第二轮事件循环输出6。</li>
+</ol>
+<p>例子2</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    <span class="comment">//由于await后面并不是promise对象，因此会将后面的代码推进微任务中，然后再执行asyn外面的代码</span></span><br><span class="line">  <span class="keyword">await</span> <span class="string">&#x27;await的结果&#x27;</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">async1()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//结果 1-2-3-4-5-6</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> async2()</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;7&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;8&#x27;</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">async1()</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//执行结果</span></span><br><span class="line"><span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>-<span class="number">5</span>-<span class="number">6</span>-<span class="number">7</span>-<span class="number">8</span></span><br><span class="line"><span class="comment">//1.同步代码先执行1，然后进入async1中输出2</span></span><br><span class="line"><span class="comment">//2.因为遇到了await因此代码进入async2中，并将7终止执行</span></span><br><span class="line"><span class="comment">//3.执行完async2输出3后跳出async函数并执行后面同步代码</span></span><br><span class="line"><span class="comment">//4.输出4后将6推到微任务队列中</span></span><br><span class="line"><span class="comment">//5.输出5后宏任务执行完了，执行微任务，并将6输出</span></span><br><span class="line"><span class="comment">//6.到处就返回async1中继续执行代码输出7</span></span><br><span class="line"><span class="comment">//6.最终执行8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//值得一提的是</span></span><br><span class="line"><span class="comment">//在谷歌浏览器输出的结果是12345768，7和6的输出顺序互换了，这是因为谷歌在73版本后修改了判断规则导致的</span></span><br></pre></td></tr></table></figure>
+
+<p>资料来源：<a target="_blank" rel="noopener" href="https://juejin.im/post/5c148ec8e51d4576e83fd836">从event loop到async await来了解事件循环机制</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" data-id="cklj86tu30001kcw4gt4zglaa" data-title="# 事件循环---Event Loop" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">首屏加载优化</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/"># 事件循环---Event Loop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/">首屏加载优化</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">async/await的基本用法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/">Javascript同步与异步问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3Promise/">初步了解Promise</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

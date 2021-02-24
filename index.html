@@ -71,6 +71,320 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-事件循环-Event-Loop" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" class="article-date">
+  <time class="dt-published" datetime="2021-02-24T09:08:53.000Z" itemprop="datePublished">2021-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/"># 事件循环---Event Loop</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    javascript是一门单线程的非阻塞的脚本语言。最基本的用途就是与浏览器交互。</p>
+<p>单线程–基于该用途，使得javascript不可能成为多线程，因为在浏览器中，我们需要对各种各样的dom操作，单线程确保了一次只能对dom进行一次操作，假若javascript是一门多线程语言，就有可能遇到多个线程对同一个dom进行操作，一个往其中添加事件，一个删除了这个dom，这时就会出现bug。</p>
+<p>javascript的另一个特点就是非阻塞，至于javascript是如何做到非阻塞的呢，答案就是本文要记录的—event loop（事件循环）</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h4 id="1、执行栈与事件队列"><a href="#1、执行栈与事件队列" class="headerlink" title="1、执行栈与事件队列"></a>1、执行栈与事件队列</h4><p>当javascript代码执行的时候会将不同的变量存于内存中的不同位置：堆（heap）和栈（stack）中来加以区分。</p>
+<p>堆(heap)：存放着一些对象</p>
+<p>栈(stack)：存放着一些基础类型变量以及对象的指针</p>
+<p><strong>注意：执行栈和上面的栈的意义有所不同</strong></p>
+<h5 id="（1）、执行栈"><a href="#（1）、执行栈" class="headerlink" title="（1）、执行栈"></a>（1）、执行栈</h5><p>当我们在调用一个方法是，js会生成一个与这个方法对应的执行环境（context），也叫执行上下文。这个执行环境中存在着这个方法的私有作用域、上层作用域的指向、方法的参数、作用域中定义的变量以及这个作用域的this对象。而当一系列方法被依次调用的时候，由于js是单线程的，一次只能执行一个方法，于是这些方法被排在了一个单独的地方—执行栈。</p>
+<p>当一个js被第一次执行的时候，js引擎会解析这段代码，并将其中的同步代码按照执行顺序加入执行栈中，然后从头开始执行。如果这个执行的是一个方法，那么js会往执行栈中添加这个方法的执行环境，然后进入这个执行环境继续执行其中代码。当这个执行环境中的代码执行完毕并返回结果后，js会推出这个执行环境并将该执行环境销毁，回到上一个方法的执行环境，这个过程会反复执行，知道执行栈中的代码全部执行完毕。</p>
+<p>由下图显示，其中的global就是初次运行脚本时向执行栈中加入的代码：</p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E6%A0%88gif.webp" alt="栈gif"></p>
+<p>由上图可知，一个方法执行会向执行栈中加入这个方法的执行环境，在这个执行环境中还可以调用其他方法，甚至是自己，其结果不过是在执行栈中再添加一个执行环境。这个过程可以是无限进行下去的，除非发生了栈溢出，即超过了所能使用内存的最大值。</p>
+<p>当然上述所说的是同步代码的执行。接下就是异步的了</p>
+<h5 id="（2）、事件队列"><a href="#（2）、事件队列" class="headerlink" title="（2）、事件队列"></a>（2）、事件队列</h5><p>js引擎在遇到一个异步事件后并不会等待其返回结果，而是将这个事件挂起，继续执行执行栈中的其他任务。当一个异步事件返回结果后，js会将这个事件加入与当前执行栈不同的另一个队列中，即事件队列。被放进事件队列中不会立即执行其回调，而是等待当前执行栈中的所有任务都执行完毕，待主线程处于闲置状态是，主线程会去查看事件队列中是否有任务。如果有，那么主线程会从中取出排在第一位的事件，并把这个事件对应的回调函数存进执行栈中，然后执行其中的同步代码，如此反复，就形成了一个无限的循环，这就是事件循环</p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop%5C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
+<p>图中的stack表示我们所说的执行栈，web apis则是代表一些异步事件，而callback queue即事件队列。</p>
+<h4 id="2、macro-task与micro-task"><a href="#2、macro-task与micro-task" class="headerlink" title="2、macro task与micro task"></a>2、macro task与micro task</h4><p>以上的事件循环过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。</p>
+<p>以下事件属于宏任务：</p>
+<ul>
+<li><code>setInterval()</code></li>
+<li><code>setTimeout()</code></li>
+</ul>
+<p>以下事件属于微任务：</p>
+<ul>
+<li><code>new Promise()</code></li>
+<li><code>new MutaionObserver()</code></li>
+</ul>
+<p>前面我们介绍过，在一个事件循环中，异步事件返回结果后会被放到一个任务队列中。然而，根据这个异步事件的类型，这个事件实际上会被对应的宏任务队列或者微任务队列中去。并且在当前执行栈为空的时候，主线程会 查看微任务队列是否有事件存在。如果不存在，那么再去宏任务队列中取出一个事件并把对应的回到加入当前执行栈；如果存在，则会依次执行队列中事件对应的回调，直到微任务队列为空，然后去宏任务队列中取出最前面的一个事件，把对应的回调加入当前执行栈…如此反复，进入循环。</p>
+<p>我们只需记住<strong>当当前执行栈执行完毕时会立刻先处理所有微任务队列中的事件，然后再去宏任务队列中取出一个事件。同一次事件循环中，微任务永远在宏任务之前执行</strong>。</p>
+<p>举个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve,reject</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">    resolve(<span class="number">3</span>)</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(val);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//2</span></span><br><span class="line"><span class="comment">//3</span></span><br><span class="line"><span class="comment">//1</span></span><br></pre></td></tr></table></figure>
+
+<p>原文来源：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33058983">详解JavaScript中的Event Loop（事件循环）机制</a></p>
+<p>事件循环补充</p>
+<p>宏任务(macro-task)：包括整体代码script、setTimeout、setInterval、MessageChannel、postMessage、setImmediate。</p>
+<p> 微任务(micro-task)：Promise、process.nextTick、MutationObsever。</p>
+<p>循环机制–不同类型的任务会进入对应的Event Queue，比如setTimeout和setInterval会进入相同(宏任务)的Event Queue。而Promise和process.nextTick会进入相同(微任务)的Event Queue。</p>
+<p>大致执行顺序</p>
+<ol>
+<li>「宏任务」、「微任务」都是队列，一段代码执行时，会先执行宏任务中的同步代码。</li>
+<li>进行第一轮事件循环的时候会把全部的js脚本当成一个宏任务来运行。</li>
+<li>如果执行中遇到setTimeout之类宏任务，那么就把这个setTimeout内部的函数推入「宏任务的队列」中，<strong>下一轮宏任务</strong>执行时调用。</li>
+<li>如果执行中遇到 promise.then() 之类的微任务，就会推入到「<strong>当前宏任务</strong>的微任务队列」中，在<strong>本轮宏任务</strong>的同步代码都执行完成后，依次执行所有的微任务。</li>
+<li>第一轮事件循环中当执行完全部的同步脚本以及微任务队列中的事件，这一轮事件循环就结束了，开始第二轮事件循环。</li>
+<li>第二轮事件循环同理先执行同步脚本，遇到其他宏任务代码块继续追加到「宏任务的队列」中，遇到微任务，就会推入到「当前宏任务的微任务队列」中，在本轮宏任务的同步代码执行都完成后，依次执行当前所有的微任务。</li>
+<li>开始第三轮，循环往复…</li>
+</ol>
+<p>例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//setTimeout -- 宏任务 暂不执行--推进宏任务队列中</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// new Promise --立即执行 promise.then函数分配到微任务中</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>) <span class="comment">// 同步任务</span></span><br><span class="line">    resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//顺序执行</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="comment">//这里有留意的是Promise.then()里面的方法才会被推进微任务队列中，所以执行顺序为1-2-3-4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="async-await"><a href="#async-await" class="headerlink" title="async/await"></a>async/await</h3><p>关键来了</p>
+<p>当函数中运用到async/await后事件循环就变得不同了</p>
+<p>在分析事件循环前先讲讲什么是async/await</p>
+<h4 id="async-await是什么？"><a href="#async-await是什么？" class="headerlink" title="async/await是什么？"></a>async/await是什么？</h4><p>我们创建了 promise 但不能同步等待它执行完成。我们只能通过 then 传一个回调函数这样很容易再次陷入 promise 的回调地狱。</p>
+<p>实际上，async/await 在底层转换成了 promise 和 then 回调函数。也就是说，这是 promise 的语法糖。每次我们使用 await, **<u>解释器都创建一个 promise 对象，然后把剩下的 async 函数中的操作放到 then 回调函数中</u>**。async/await 的实现，离不开 Promise。从字面意思来理解，async 是“异步”的简写，而 await 是 async wait 的简写可以认为是等待异步方法执行完成。</p>
+<p>举个例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aa</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> asyFn = <span class="keyword">async</span> ()=&gt;&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="number">666</span>)</span><br><span class="line">	<span class="keyword">await</span> aa()</span><br><span class="line">    <span class="comment">//await后面的操作全放在了promise的then函数中了</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">77</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//等价于</span></span><br><span class="line"><span class="keyword">let</span> proFn = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="number">666</span>)</span><br><span class="line">        resolve()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line">proFn().then(<span class="function"><span class="params">res</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">77</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="async-await用来干什么？"><a href="#async-await用来干什么？" class="headerlink" title="async/await用来干什么？"></a>async/await用来干什么？</h4><p>用来优化 promise 的回调问题，被称作是异步的终极解决方案。 – 解决回掉地狱</p>
+<h4 id="async-await内部做了什么？"><a href="#async-await内部做了什么？" class="headerlink" title="async/await内部做了什么？"></a>async/await内部做了什么？</h4><p>async 函数会返回一个 Promise 对象，如果在函数中 return 一个直接量（普通变量），async 会把这个直接量通过 Promise.resolve() 封装成 Promise 对象。如果你返回了promise那就以你返回的promise为准。 await 是在等待，等待运行的结果也就是返回值。await后面通常是一个异步操作（promise），但是这不代表 await 后面只能跟异步操作 await 后面实际是可以接普通函数调用或者直接量的。</p>
+<h4 id="await的等待机制？"><a href="#await的等待机制？" class="headerlink" title="await的等待机制？"></a>await的等待机制？</h4><p>如果 await 后面跟的不是一个 Promise，那 await 后面表达式的运算结果就是它等到的东西；如果 await 后面跟的是一个 Promise 对象，await 它会“阻塞”后面的代码，等着 Promise 对象 resolve，然后得到 resolve 的值作为 await 表达式的运算结果。但是此“阻塞”非彼“阻塞”这就是 await 必须用在 async 函数中的原因。async 函数调用不会造成“阻塞”，<strong>它内部所有的“阻塞”都被封装在一个 Promise 对象中异步执行。（这里的阻塞理解成异步等待更合理）</strong></p>
+<h4 id="async-await在使用过程中有什么规定？"><a href="#async-await在使用过程中有什么规定？" class="headerlink" title="async/await在使用过程中有什么规定？"></a>async/await在使用过程中有什么规定？</h4><p>每个 async 方法都返回一个 promise 对象。await 只能出现在 async 函数中。</p>
+<h4 id="async-await-在什么场景使用？"><a href="#async-await-在什么场景使用？" class="headerlink" title="async/await 在什么场景使用？"></a>async/await 在什么场景使用？</h4><p>单一的 Promise 链并不能发现 async/await 的优势，但是如果需要处理由多个 Promise 组成的 then 链的时候，优势就能体现出来了（Promise 通过 then 链来解决多层回调的问题，现在又用 async/await 来进一步优化它）。</p>
+<h4 id="async-await的运行机制"><a href="#async-await的运行机制" class="headerlink" title="async/await的运行机制"></a>async/await的运行机制</h4><p>大致方法：</p>
+<ol>
+<li>async定义的是一个Promise函数和普通函数一样只要不调用就不会进入事件队列。</li>
+<li>async内部如果没有主动return Promise，那么async会把函数的返回值用Promise包装。</li>
+<li>await关键字必须出现在async函数中，await后面不是必须要跟一个异步操作，也可以是一个普通表达式。</li>
+<li>遇到await关键字，await右边的语句会被立即执行然后<strong>await下面的代码进入等待状态，等待await得到结果</strong>。 await后面如果不是 promise 对象, <strong>await会阻塞后面的代码，先执行async外面的同步代码，同步代码执行完，再回到async内部</strong>，把这个非promise的东西，作为 await表达式的结果。 <strong>await后面如果是 promise 对象，await 也会暂停async后面的代码，先执行async外面的同步代码</strong>，等着 Promise 对象 fulfilled，然后把 resolve 的参数作为 await 表达式的运算结果。</li>
+</ol>
+<p>例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> async2()</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line">async1()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//最终结果</span></span><br><span class="line"><span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>-<span class="number">5</span>-<span class="number">6</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>6是宏任务在下一轮事件循环执行</li>
+<li>先同步输出1，然后调用了async1()，输出2。</li>
+<li>await async2() 会先运行async2()，5进入等待状态。</li>
+<li>输出3，这个时候先执行async函数外的同步代码输出4。</li>
+<li>最后await拿到等待的结果继续往下执行输出5。</li>
+<li>进入第二轮事件循环输出6。</li>
+</ol>
+<p>例子2</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    <span class="comment">//由于await后面并不是promise对象，因此会将后面的代码推进微任务中，然后再执行asyn外面的代码</span></span><br><span class="line">  <span class="keyword">await</span> <span class="string">&#x27;await的结果&#x27;</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">async1()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//结果 1-2-3-4-5-6</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> async2()</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;7&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;8&#x27;</span>)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">async1()</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;6&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//执行结果</span></span><br><span class="line"><span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>-<span class="number">5</span>-<span class="number">6</span>-<span class="number">7</span>-<span class="number">8</span></span><br><span class="line"><span class="comment">//1.同步代码先执行1，然后进入async1中输出2</span></span><br><span class="line"><span class="comment">//2.因为遇到了await因此代码进入async2中，并将7终止执行</span></span><br><span class="line"><span class="comment">//3.执行完async2输出3后跳出async函数并执行后面同步代码</span></span><br><span class="line"><span class="comment">//4.输出4后将6推到微任务队列中</span></span><br><span class="line"><span class="comment">//5.输出5后宏任务执行完了，执行微任务，并将6输出</span></span><br><span class="line"><span class="comment">//6.到处就返回async1中继续执行代码输出7</span></span><br><span class="line"><span class="comment">//6.最终执行8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//值得一提的是</span></span><br><span class="line"><span class="comment">//在谷歌浏览器输出的结果是12345768，7和6的输出顺序互换了，这是因为谷歌在73版本后修改了判断规则导致的</span></span><br></pre></td></tr></table></figure>
+
+<p>资料来源：<a target="_blank" rel="noopener" href="https://juejin.im/post/5c148ec8e51d4576e83fd836">从event loop到async await来了解事件循环机制</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" data-id="cklj86tu30001kcw4gt4zglaa" data-title="# 事件循环---Event Loop" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-首屏加载优化" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/" class="article-date">
+  <time class="dt-published" datetime="2021-02-24T08:53:26.000Z" itemprop="datePublished">2021-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/">首屏加载优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题</p>
+</blockquote>
+<h3 id="1-解决思路"><a href="#1-解决思路" class="headerlink" title="1.解决思路"></a>1.解决思路</h3><p>​    1.压缩代码和图片</p>
+<p>​    2.组件和图片按需加载</p>
+<p>​    3.通过cdn引入资源，避免将其直接打包</p>
+<p>​    4.通过gzip搭配服务器压缩代码（重点）</p>
+<p>​        </p>
+<h3 id="2-解决方法"><a href="#2-解决方法" class="headerlink" title="2.解决方法"></a>2.解决方法</h3><h4 id="1-了解项目所有包的占比"><a href="#1-了解项目所有包的占比" class="headerlink" title="1.了解项目所有包的占比"></a>1.了解项目所有包的占比</h4><p>​        运用一款打包分析工具Webpack Bundle Analyzer来清晰得了解项目包的情况</p>
+<p>​        安装：    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev webpack-bundle-analyzer &#x2F;&#x2F;npm安装</span><br><span class="line">yarn add -s webpack-bundle-analyzer -D&#x2F;&#x2F;yarn 安装</span><br></pre></td></tr></table></figure>
+
+<p>​        配置：</p>
+<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="1572861741246"></p>
+<p> 配置代码为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BundleAnalyzerPlugin(&#123;</span><br><span class="line">    analyzerMode: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">    analyzerHost: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">    analyzerPort: <span class="number">8888</span>, <span class="comment">// 运行后的端口号</span></span><br><span class="line">    reportFilename: <span class="string">&#x27;report.html&#x27;</span>,</span><br><span class="line">    defaultSizes: <span class="string">&#x27;parsed&#x27;</span>,</span><br><span class="line">    openAnalyzer: <span class="literal">true</span>,</span><br><span class="line">    generateStatsFile: <span class="literal">false</span>,</span><br><span class="line">    statsFilename: <span class="string">&#x27;stats.json&#x27;</span>,</span><br><span class="line">    statsOptions: <span class="literal">null</span>,</span><br><span class="line">    logLevel: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>当项目build后会出现一个页面，其中包含各种的占比和其大小，根据该图能针对不同的包进行操作。</p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="1572861934155"></p>
+<h4 id="2-element-ui的按需加载"><a href="#2-element-ui的按需加载" class="headerlink" title="2.element-ui的按需加载"></a>2.element-ui的按需加载</h4><p>​        当element-ui全局引入时，打包出来的文件十分大，因此要按需引入</p>
+<p>​        但想对element-ui按需加载需要需要组件来帮助<a target="_blank" rel="noopener" href="https://github.com/QingWei-Li/babel-plugin-component">babel-plugin-component</a></p>
+<p>​        首先，安装 babel-plugin-component：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install babel-plugin-component -D</span><br></pre></td></tr></table></figure>
+
+<p>​        然后，将 .babelrc 修改为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;presets&quot;</span>: [</span><br><span class="line">    [<span class="string">&quot;es2015&quot;</span>, &#123; <span class="string">&quot;modules&quot;</span>: <span class="literal">false</span> &#125;]</span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;plugins&quot;</span>: [[<span class="string">&quot;component&quot;</span>, [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;libraryName&quot;</span>: <span class="string">&quot;element-ui&quot;</span>,</span><br><span class="line">      <span class="string">&quot;styleLibraryName&quot;</span>: <span class="string">&quot;theme-chalk&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]]]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你只希望引入部分组件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; Button, Select &#125; <span class="keyword">from</span> <span class="string">&#x27;element-ui&#x27;</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line">Vue.component(Button.name, Button)</span><br><span class="line">Vue.component(Select.name, Select)</span><br><span class="line"><span class="comment">/* 或写为</span></span><br><span class="line"><span class="comment"> * Vue.use(Button)</span></span><br><span class="line"><span class="comment"> * Vue.use(Select)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>实现效果如下：</p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="1572862377991"></p>
+<h4 id="3-组件按需加载"><a href="#3-组件按需加载" class="headerlink" title="3.组件按需加载"></a>3.组件按需加载</h4><p>​        如图所示</p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="1572862490945"></p>
+<h4 id="4-cdn引入"><a href="#4-cdn引入" class="headerlink" title="4.cdn引入"></a>4.cdn引入</h4><p>​        在index.html中引入cdn资源</p>
+<p>​            如图所示</p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="1572862844298"></p>
+<p>​        修改 build/webpack.base.conf.js ，添加或修改externals</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">    <span class="string">&#x27;vue&#x27;</span>: <span class="string">&#x27;Vue&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vue-router&#x27;</span>: <span class="string">&#x27;VueRouter&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vuex&#x27;</span>: <span class="string">&#x27;Vuex&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;axios&#x27;</span>: <span class="string">&#x27;axios&#x27;</span> </span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>​        修改src/main.js src/router/index.js 注释掉import引入的vue,vue-resource</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// import Vue from &#x27;vue&#x27;</span></span><br><span class="line"><span class="comment">// import VueResource from &#x27;vue-resource&#x27;</span></span><br><span class="line"><span class="comment">// Vue.use(VueResource)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="5-gzip压缩（关键）"><a href="#5-gzip压缩（关键）" class="headerlink" title="5.gzip压缩（关键）"></a>5.gzip压缩（关键）</h4><p>​        通过gzip压缩，能将打好的包压缩到原来的1/3，gzip分为2部分，需要服务器配合</p>
+<p>​        先安装 compression-webpack-plugin 插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm  i compression-webpack-plugin -save-dev</span><br><span class="line">&#x2F;&#x2F;或者</span><br><span class="line">yarn -D compression-webpack-plugin</span><br></pre></td></tr></table></figure>
+
+<p>​        然后再webpack.prod.conf.js中配置    </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">webpackConfig.plugins.push(</span><br><span class="line">       <span class="keyword">new</span> CompressionWebpackPlugin(&#123;</span><br><span class="line">           asset: <span class="string">&#x27;[path].gz[query]&#x27;</span>,</span><br><span class="line">           algorithm: <span class="string">&#x27;gzip&#x27;</span>,</span><br><span class="line">           test: <span class="keyword">new</span> <span class="built_in">RegExp</span>(</span><br><span class="line">               <span class="string">&#x27;\\.(&#x27;</span> +</span><br><span class="line">               config.build.productionGzipExtensions.join(<span class="string">&#x27;|&#x27;</span>) +</span><br><span class="line">               <span class="string">&#x27;)$&#x27;</span></span><br><span class="line">           ),</span><br><span class="line">           threshold: <span class="number">10240</span>,</span><br><span class="line">           minRatio: <span class="number">0.8</span></span><br><span class="line">       &#125;)</span><br><span class="line">   )</span><br></pre></td></tr></table></figure>
+
+<p>最后在config/index.js中将productionGzip设置为true就可以了</p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="1572916447286"></p>
+<p>​    然后到了服务器配置了，我用的node作为服务器运行，因此讲下如何配置node的</p>
+<p>​        1.express</p>
+<p>​            先安装一个依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install compression --save</span><br></pre></td></tr></table></figure>
+
+<p>​            然后在文件中配置以下代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> compression = <span class="built_in">require</span>(<span class="string">&#x27;compression&#x27;</span>)</span><br><span class="line"><span class="keyword">var</span> app = express();</span><br><span class="line"><span class="comment">// 启用gzip</span></span><br><span class="line">app.use(compression());</span><br></pre></td></tr></table></figure>
+
+<p>​            这样gzip就可以跑起来了</p>
+<p>​        2.koa</p>
+<p>​            安装koa-compress中间件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install koa-compress --save</span><br></pre></td></tr></table></figure>
+
+<p>​            配置koa-compress中间件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> compress = <span class="built_in">require</span>(<span class="string">&#x27;koa-compress&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = koa();</span><br><span class="line"><span class="keyword">const</span> options = &#123; <span class="attr">threshold</span>: <span class="number">2048</span> &#125;;</span><br><span class="line">app.use(compress(options));</span><br></pre></td></tr></table></figure>
+
+
+
+<p>至此，vue项目的首屏优化就到这里了，剩余还有的是请求优化等一系列操作了，不过我还没来得及改，就不写了。</p>
+<p>最后介绍一个比较好用的测试网站性能的在线网站，可以用于测试网站性能。</p>
+<p>GTmetrix:<a target="_blank" rel="noopener" href="https://gtmetrix.com/">https://gtmetrix.com/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/" data-id="cklj86tu40002kcw47ze1hw47" data-title="首屏加载优化" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-async-await的基本用法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2021-02-24T08:52:23.000Z" itemprop="datePublished">2021-02-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">async/await的基本用法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>首先，我们使用<code>async</code>关键字，您可以将它放在函数声明之前，将其转换为async function；</p>
+<p><strong>async function</strong>用来定义一个返回AsyncFunction 对象的异步函数。异步函数是指通过事件循环异步执行的函数，它会通过一个隐式的Promise 返回其结果。如果你在代码中使用了异步函数，就会发现它的语法和结构会更像是标准的同步函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">resolveAfter2Seconds</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      resolve(<span class="string">&#x27;resolved&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">asyncCall</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;calling&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> result = <span class="keyword">await</span> resolveAfter2Seconds();</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">  <span class="comment">// expected output: &#x27;resolved&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncCall();</span><br><span class="line"><span class="comment">//calling</span></span><br><span class="line"><span class="comment">//resolved</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">name</span>(<span class="params">[param[, param[, ... param]]]</span>) </span>&#123; statements &#125;</span><br></pre></td></tr></table></figure>
+
+<p>参数：</p>
+<p>​    name：函数名</p>
+<p>​    param：要传递给函数的参数</p>
+<p>​    statements：函数体语言</p>
+<p>返回值：</p>
+<p>​    返回的Promise对象会运行执行(resolve)异步函数的返回结果，或者运行拒绝(reject)——如果异步函数抛出异常的话。</p>
+<h4 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h4><p>异步函数可以包含<code>await</code>指令，该指令会暂停异步函数的执行，并等待Promise执行，然后继续执行异步函数，并返回结果。</p>
+<p>记住，await 关键字只在异步函数内有效。如果你在异步函数外使用它，会抛出语法错误。</p>
+<p>注意，当异步函数暂停时，它调用的函数会继续执行(收到异步函数返回的隐式Promise)</p>
+<p>一个详细的示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> resolveAfter2Seconds = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&quot;starting slow promise&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      resolve(<span class="string">&quot;slow&quot;</span>);</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&quot;slow promise is done&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> resolveAfter1Second = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&quot;starting fast promise&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      resolve(<span class="string">&quot;fast&quot;</span>);</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&quot;fast promise is done&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> sequentialStart = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;==SEQUENTIAL START==&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 1. Execution gets here almost instantly</span></span><br><span class="line">    <span class="comment">//先创建一个slow的定时器--用了2秒</span></span><br><span class="line">  <span class="keyword">const</span> slow = <span class="keyword">await</span> resolveAfter2Seconds();</span><br><span class="line">  <span class="built_in">console</span>.log(slow); <span class="comment">// 2. this runs 2 seconds after 1.</span></span><br><span class="line">	<span class="comment">//当slow完成后再创建一个fast的定时器 --用了1s</span></span><br><span class="line">  <span class="keyword">const</span> fast = <span class="keyword">await</span> resolveAfter1Second();</span><br><span class="line">  <span class="built_in">console</span>.log(fast); <span class="comment">// 3. this runs 3 seconds after 1.</span></span><br><span class="line">  <span class="comment">//一共花了3秒  </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> concurrentStart = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;==CONCURRENT START with await==&#x27;</span>);</span><br><span class="line">    <span class="comment">//开始定义slow的定时器</span></span><br><span class="line">  <span class="keyword">const</span> slow = resolveAfter2Seconds(); <span class="comment">// starts timer immediately</span></span><br><span class="line">    <span class="comment">//开始定义fast的定时器</span></span><br><span class="line">  <span class="keyword">const</span> fast = resolveAfter1Second(); <span class="comment">// starts timer immediately</span></span><br><span class="line"><span class="comment">//由于是同时开始定义定时器的，所以2个定时器是同时开始计时</span></span><br><span class="line">    </span><br><span class="line">  <span class="comment">// 1. Execution gets here almost instantly</span></span><br><span class="line">    <span class="comment">//等待slow定时器返回结果</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">await</span> slow); <span class="comment">// 2. this runs 2 seconds after 1.</span></span><br><span class="line">    <span class="comment">//当slow返回结果后，fast由于已经完成了1s了，所以能立即返回数据</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">await</span> fast); <span class="comment">// 3. this runs 2 seconds after 1., immediately after 2., since fast is already resolved</span></span><br><span class="line">    <span class="comment">//该程序只执行了2秒</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> concurrentPromise = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;==CONCURRENT START with Promise.all==&#x27;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Promise</span>.all([resolveAfter2Seconds(), resolveAfter1Second()]).then(<span class="function">(<span class="params">messages</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">//等待slow的结果返回</span></span><br><span class="line">    <span class="built_in">console</span>.log(messages[<span class="number">0</span>]); <span class="comment">// slow</span></span><br><span class="line">    <span class="built_in">console</span>.log(messages[<span class="number">1</span>]); <span class="comment">// fast</span></span><br><span class="line">  &#125;);</span><br><span class="line">    <span class="comment">//改程序执行了2秒</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> parallel = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;==PARALLEL with await Promise.all==&#x27;</span>);</span><br><span class="line">  <span class="comment">//同上</span></span><br><span class="line">  <span class="comment">// Start 2 &quot;jobs&quot; in parallel and wait for both of them to complete</span></span><br><span class="line">  <span class="keyword">await</span> <span class="built_in">Promise</span>.all([</span><br><span class="line">      (<span class="keyword">async</span>()=&gt;<span class="built_in">console</span>.log(<span class="keyword">await</span> resolveAfter2Seconds()))(),</span><br><span class="line">      (<span class="keyword">async</span>()=&gt;<span class="built_in">console</span>.log(<span class="keyword">await</span> resolveAfter1Second()))()</span><br><span class="line">  ]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This function does not handle errors. See warning below!</span></span><br><span class="line"><span class="keyword">var</span> parallelPromise = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;==PARALLEL with Promise.then==&#x27;</span>);</span><br><span class="line">  resolveAfter2Seconds().then(<span class="function">(<span class="params">message</span>)=&gt;</span><span class="built_in">console</span>.log(message));</span><br><span class="line">  resolveAfter1Second().then(<span class="function">(<span class="params">message</span>)=&gt;</span><span class="built_in">console</span>.log(message));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sequentialStart(); <span class="comment">// after 2 seconds, logs &quot;slow&quot;, then after 1 more second, &quot;fast&quot;</span></span><br><span class="line"><span class="comment">//一共花了3秒，</span></span><br><span class="line"><span class="comment">//结果</span></span><br><span class="line"><span class="comment">//==SEQUENTIAL START==</span></span><br><span class="line"><span class="comment">//starting slow promise</span></span><br><span class="line"><span class="comment">//slow</span></span><br><span class="line"><span class="comment">//starting fast promise</span></span><br><span class="line"><span class="comment">//fast promise is done</span></span><br><span class="line"><span class="comment">//fast</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// wait above to finish</span></span><br><span class="line"><span class="built_in">setTimeout</span>(concurrentStart, <span class="number">4000</span>); <span class="comment">// after 2 seconds, logs &quot;slow&quot; and then &quot;fast&quot;</span></span><br><span class="line"><span class="comment">//一共花了6秒，</span></span><br><span class="line"><span class="comment">//结果</span></span><br><span class="line"><span class="comment">//==CONCURRENT START with await==</span></span><br><span class="line"><span class="comment">//starting slow promise</span></span><br><span class="line"><span class="comment">//starting fast promise</span></span><br><span class="line"><span class="comment">//fast promise is done</span></span><br><span class="line"><span class="comment">//slow promise is done</span></span><br><span class="line"><span class="comment">//slow</span></span><br><span class="line"><span class="comment">//fast</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// wait again</span></span><br><span class="line"><span class="built_in">setTimeout</span>(concurrentPromise, <span class="number">7000</span>); <span class="comment">// same as concurrentStart</span></span><br><span class="line"><span class="comment">//一共花了9秒</span></span><br><span class="line"><span class="comment">//==CONCURRENT START with Promise.all==</span></span><br><span class="line"><span class="comment">//starting slow promise</span></span><br><span class="line"><span class="comment">//starting fast promise</span></span><br><span class="line"><span class="comment">//fast promise is done</span></span><br><span class="line"><span class="comment">//slow promise is done</span></span><br><span class="line"><span class="comment">//slow</span></span><br><span class="line"><span class="comment">//fast</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// wait again</span></span><br><span class="line"><span class="built_in">setTimeout</span>(parallel, <span class="number">10000</span>); <span class="comment">// truly parallel: after 1 second, logs &quot;fast&quot;, then after 1 more second, &quot;slow&quot;</span></span><br><span class="line"><span class="comment">//一共花了12秒</span></span><br><span class="line"><span class="comment">// wait again</span></span><br><span class="line"><span class="built_in">setTimeout</span>(parallelPromise, <span class="number">13000</span>); <span class="comment">// same as parallel</span></span><br></pre></td></tr></table></figure>
+
+<p>使用async函数重写 promise 链</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getProcessedData</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> downloadData(url) <span class="comment">// 返回一个 promise 对象</span></span><br><span class="line">    .catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> downloadFallbackData(url)  <span class="comment">// 返回一个 promise 对象</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .then(<span class="function"><span class="params">v</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> processDataInWorker(v); <span class="comment">// 返回一个 promise 对象</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重写成单个asynv函数后</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getProcessedData</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> v;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    v = <span class="keyword">await</span> downloadData(url); </span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    v = <span class="keyword">await</span> downloadFallbackData(url);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> processDataInWorker(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="async-await的缺陷"><a href="#async-await的缺陷" class="headerlink" title="async/await的缺陷"></a>async/await的缺陷</h3><p>Async / await对于了解非常有用，但还有一些缺点需要考虑。</p>
+<p>Async / await使您的代码看起来是同步的，并且在某种程度上它使它的行为更加同步。 <code>await</code>关键字阻止执行所有代码，直到promise完成，就像执行同步操作一样。它允许其他任务在此期间继续运行，但您自己的代码被阻止。</p>
+<p>这意味着您的代码可能会因为大量等待的promises相继发生而变慢。每个<code>await</code>将等待前一个完成，而实际上你想要的是promises同时开始处理（就像我们没有使用async / await时那样）。</p>
+<p>有一种模式可以缓解这个问题 ––通过关闭所有promise进程将<code>Promise</code>对象存储在变量中，然后等待触发它们。让我们看一些证明这个概念的例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">timeoutPromise</span>(<span class="params">interval</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      resolve(<span class="string">&quot;done&quot;</span>);</span><br><span class="line">    &#125;, interval);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//比较耗时的方法 按累计来算，估计要花费9s来执行</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">timeTest</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> timeoutPromise(<span class="number">3000</span>);</span><br><span class="line">  <span class="keyword">await</span> timeoutPromise(<span class="number">3000</span>);</span><br><span class="line">  <span class="keyword">await</span> timeoutPromise(<span class="number">3000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">timeTest</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> timeoutPromise1 = timeoutPromise(<span class="number">3000</span>);</span><br><span class="line">  <span class="keyword">const</span> timeoutPromise2 = timeoutPromise(<span class="number">3000</span>);</span><br><span class="line">  <span class="keyword">const</span> timeoutPromise3 = timeoutPromise(<span class="number">3000</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">await</span> timeoutPromise1;</span><br><span class="line">  <span class="keyword">await</span> timeoutPromise2;</span><br><span class="line">  <span class="keyword">await</span> timeoutPromise3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，我们将三个Promise对象存储在变量中，这样可以同时启动它们关联的进程</p>
+<p>接下来，我们等待他们的结果 - 因为promise都在基本上同时开始处理，promise将同时完成;当您运行第二个示例时，您将看到警报框报告总运行时间超过3秒！</p>
+<p>您必须仔细测试您的代码，并在性能开始受损时牢记这一点</p>
+<p>原文来源：<a href="%5Bhttps://developer.mozilla.org/zh-CN/docs/learn/JavaScript/%E5%BC%82%E6%AD%A5/Async_await%5D(https://developer.mozilla.org/zh-CN/docs/learn/JavaScript/%E5%BC%82%E6%AD%A5/Async_await)">async和await:让异步编程更简单</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" data-id="cklj86tu00000kcw45rpvhk6m" data-title="async/await的基本用法" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Javascript同步与异步问题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/" class="article-date">
@@ -251,6 +565,18 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/"># 事件循环---Event Loop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/">首屏加载优化</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">async/await的基本用法</a>
+          </li>
         
           <li>
             <a href="/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/">Javascript同步与异步问题</a>
