@@ -20,8 +20,10 @@
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png">
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png">
 <meta property="article:published_time" content="2021-02-24T08:53:26.000Z">
-<meta property="article:modified_time" content="2021-02-24T09:08:03.586Z">
+<meta property="article:modified_time" content="2021-02-25T08:35:38.111Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="Vue">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png">
   
@@ -86,6 +88,10 @@
   <time class="dt-published" datetime="2021-02-24T08:53:26.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -115,12 +121,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev webpack-bundle-analyzer &#x2F;&#x2F;npm安装</span><br><span class="line">yarn add -s webpack-bundle-analyzer -D&#x2F;&#x2F;yarn 安装</span><br></pre></td></tr></table></figure>
 
 <p>​        配置：</p>
-<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="1572861741246"></p>
+<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="webpack配置"></p>
 <p> 配置代码为：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BundleAnalyzerPlugin(&#123;</span><br><span class="line">    analyzerMode: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">    analyzerHost: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">    analyzerPort: <span class="number">8888</span>, <span class="comment">// 运行后的端口号</span></span><br><span class="line">    reportFilename: <span class="string">&#x27;report.html&#x27;</span>,</span><br><span class="line">    defaultSizes: <span class="string">&#x27;parsed&#x27;</span>,</span><br><span class="line">    openAnalyzer: <span class="literal">true</span>,</span><br><span class="line">    generateStatsFile: <span class="literal">false</span>,</span><br><span class="line">    statsFilename: <span class="string">&#x27;stats.json&#x27;</span>,</span><br><span class="line">    statsOptions: <span class="literal">null</span>,</span><br><span class="line">    logLevel: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 <p>当项目build后会出现一个页面，其中包含各种的占比和其大小，根据该图能针对不同的包进行操作。</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="1572861934155"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="包裹大小"></p>
 <h4 id="2-element-ui的按需加载"><a href="#2-element-ui的按需加载" class="headerlink" title="2.element-ui的按需加载"></a>2.element-ui的按需加载</h4><p>​        当element-ui全局引入时，打包出来的文件十分大，因此要按需引入</p>
 <p>​        但想对element-ui按需加载需要需要组件来帮助<a target="_blank" rel="noopener" href="https://github.com/QingWei-Li/babel-plugin-component">babel-plugin-component</a></p>
 <p>​        首先，安装 babel-plugin-component：</p>
@@ -133,12 +139,12 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; Button, Select &#125; <span class="keyword">from</span> <span class="string">&#x27;element-ui&#x27;</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line">Vue.component(Button.name, Button)</span><br><span class="line">Vue.component(Select.name, Select)</span><br><span class="line"><span class="comment">/* 或写为</span></span><br><span class="line"><span class="comment"> * Vue.use(Button)</span></span><br><span class="line"><span class="comment"> * Vue.use(Select)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
 <p>实现效果如下：</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="1572862377991"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="按需加载"></p>
 <h4 id="3-组件按需加载"><a href="#3-组件按需加载" class="headerlink" title="3.组件按需加载"></a>3.组件按需加载</h4><p>​        如图所示</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="1572862490945"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="组件按需加载"></p>
 <h4 id="4-cdn引入"><a href="#4-cdn引入" class="headerlink" title="4.cdn引入"></a>4.cdn引入</h4><p>​        在index.html中引入cdn资源</p>
 <p>​            如图所示</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="1572862844298"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="cdn"></p>
 <p>​        修改 build/webpack.base.conf.js ，添加或修改externals</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">    <span class="string">&#x27;vue&#x27;</span>: <span class="string">&#x27;Vue&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vue-router&#x27;</span>: <span class="string">&#x27;VueRouter&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vuex&#x27;</span>: <span class="string">&#x27;Vuex&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;axios&#x27;</span>: <span class="string">&#x27;axios&#x27;</span> </span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
 
@@ -153,7 +159,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">webpackConfig.plugins.push(</span><br><span class="line">       <span class="keyword">new</span> CompressionWebpackPlugin(&#123;</span><br><span class="line">           asset: <span class="string">&#x27;[path].gz[query]&#x27;</span>,</span><br><span class="line">           algorithm: <span class="string">&#x27;gzip&#x27;</span>,</span><br><span class="line">           test: <span class="keyword">new</span> <span class="built_in">RegExp</span>(</span><br><span class="line">               <span class="string">&#x27;\\.(&#x27;</span> +</span><br><span class="line">               config.build.productionGzipExtensions.join(<span class="string">&#x27;|&#x27;</span>) +</span><br><span class="line">               <span class="string">&#x27;)$&#x27;</span></span><br><span class="line">           ),</span><br><span class="line">           threshold: <span class="number">10240</span>,</span><br><span class="line">           minRatio: <span class="number">0.8</span></span><br><span class="line">       &#125;)</span><br><span class="line">   )</span><br></pre></td></tr></table></figure>
 
 <p>最后在config/index.js中将productionGzip设置为true就可以了</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="1572916447286"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="config修改"></p>
 <p>​    然后到了服务器配置了，我用的node作为服务器运行，因此讲下如何配置node的</p>
 <p>​        1.express</p>
 <p>​            先安装一个依赖</p>
@@ -183,6 +189,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -215,12 +223,33 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Promise/" rel="tag">Promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/tags/javascript/" style="font-size: 20px;">javascript</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -239,6 +268,10 @@
       <ul>
         
           <li>
+            <a href="/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/">神奇的定时器</a>
+          </li>
+        
+          <li>
             <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/">事件循环---Event Loop</a>
           </li>
         
@@ -252,10 +285,6 @@
         
           <li>
             <a href="/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/">Javascript同步与异步问题</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/24/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3Promise/">初步了解Promise</a>
           </li>
         
       </ul>

@@ -71,12 +71,93 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-神奇的定时器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/" class="article-date">
+  <time class="dt-published" datetime="2021-02-25T07:32:20.000Z" itemprop="datePublished">2021-02-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/">神奇的定时器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><blockquote>
+<p>与传统的定时器setTimeout和setInterval不同，requestAnimationFrame不需要设置任何的时间间隔，这样是为什么呢？为什么requestAnimationFrame会被成为神奇的定时器呢？</p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    计时器一直是javascript动画的核心技术。而编写动画循环的关键是要知道延迟时间多长合适。一方面，循环间隔必须足够短，这样才能让不同的动画效果显得平滑流畅；另一方面，循环间隔还要足够长，这样才能确保浏览器有能力渲染产生的变化。</p>
+<p>​    大多数电脑显示器的刷新频率是60Hz，大概相当于每秒钟重绘60次。大多数浏览器都会对重绘操作加以限制，不超过显示器的重绘频率，因为即使超过那个频率用户体验也不会有提升。因此，最平滑动画的最佳循环间隔是1000ms/60，约等于16.6ms</p>
+<p>　　而setTimeout和setInterval的问题是，它们都不精确。它们的内在运行机制决定了时间间隔参数实际上只是指定了把动画代码添加到浏览器UI线程队列中以等待执行的时间。如果队列前面已经加入了其他任务，那动画代码就要等前面的任务完成后再执行</p>
+<p>　　requestAnimationFrame采用系统时间间隔，保持最佳绘制效率，不会因为间隔时间过短，造成过度绘制，增加开销；也不会因为间隔时间太长，使用动画卡顿不流畅，让各种网页动画效果能够有一个统一的刷新机制，从而节省系统资源，提高系统性能，改善视觉效果</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>​    【1】requestAnimationFrame会把每一帧中的所有DOM操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率</p>
+<p>​    【2】在隐藏或不可见的元素中，requestAnimationFrame将不会进行重绘或回流，这当然就意味着更少的CPU、GPU和内存使用量</p>
+<p>​    【3】requestAnimationFrame是由浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停，有效节省了CPU开销</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置定时器</span></span><br><span class="line"><span class="keyword">let</span> time = requestAnimationFrame(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">666</span>);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//清除定时器</span></span><br><span class="line">cancelAnimationFrame(time);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="兼容"><a href="#兼容" class="headerlink" title="兼容"></a>兼容</h3><p>​    IE9-不兼容</p>
+<p>简单兼容</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.requestAnimationFrame) &#123;</span><br><span class="line">    requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(fn, <span class="number">17</span>);</span><br><span class="line">    &#125;;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>严格模式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="built_in">window</span>.requestAnimationFrame)&#123;</span><br><span class="line">    <span class="keyword">var</span> lastTime = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">window</span>.requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">callback</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> currTime = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">        <span class="keyword">var</span> timeToCall = <span class="built_in">Math</span>.max(<span class="number">0</span>,<span class="number">16.7</span>-(currTime - lastTime));</span><br><span class="line">        <span class="keyword">var</span> id  = <span class="built_in">window</span>.setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            callback(currTime + timeToCall);</span><br><span class="line">        &#125;,timeToCall);</span><br><span class="line">        lastTime = currTime + timeToCall;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>兼容清除定时器</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.cancelAnimationFrame) &#123;</span><br><span class="line">    <span class="built_in">window</span>.cancelAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">clearTimeout</span>(id);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="简单应用"><a href="#简单应用" class="headerlink" title="简单应用"></a>简单应用</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myDiv&quot;</span> style=<span class="string">&quot;background-color: lightblue;width: 0;height: 20px;line-height: 20px;&quot;</span>&gt;<span class="number">0</span>%&lt;/div&gt;</span><br><span class="line">&lt;button id=<span class="string">&quot;btn&quot;</span>&gt;run&lt;/button&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">var</span> timer;</span><br><span class="line">btn.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    myDiv.style.width = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    cancelAnimationFrame(timer);</span><br><span class="line">    timer = requestAnimationFrame(<span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">parseInt</span>(myDiv.style.width) &lt; <span class="number">500</span>)&#123;</span><br><span class="line">            myDiv.style.width = <span class="built_in">parseInt</span>(myDiv.style.width) + <span class="number">5</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">            myDiv.innerHTML =     <span class="built_in">parseInt</span>(myDiv.style.width)/<span class="number">5</span> + <span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">            timer = requestAnimationFrame(fn);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            cancelAnimationFrame(timer);</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>原文来源：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaohuochai/p/5777186.html">https://www.cnblogs.com/xiaohuochai/p/5777186.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/" data-id="cklkk9rjv0001e0w4b6jkhre3" data-title="神奇的定时器" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-事件循环-Event-Loop" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/" class="article-date">
   <time class="dt-published" datetime="2021-02-24T09:08:53.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -190,6 +271,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -204,6 +287,10 @@
   <time class="dt-published" datetime="2021-02-24T08:53:26.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -233,12 +320,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev webpack-bundle-analyzer &#x2F;&#x2F;npm安装</span><br><span class="line">yarn add -s webpack-bundle-analyzer -D&#x2F;&#x2F;yarn 安装</span><br></pre></td></tr></table></figure>
 
 <p>​        配置：</p>
-<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="1572861741246"></p>
+<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="webpack配置"></p>
 <p> 配置代码为：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BundleAnalyzerPlugin(&#123;</span><br><span class="line">    analyzerMode: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">    analyzerHost: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">    analyzerPort: <span class="number">8888</span>, <span class="comment">// 运行后的端口号</span></span><br><span class="line">    reportFilename: <span class="string">&#x27;report.html&#x27;</span>,</span><br><span class="line">    defaultSizes: <span class="string">&#x27;parsed&#x27;</span>,</span><br><span class="line">    openAnalyzer: <span class="literal">true</span>,</span><br><span class="line">    generateStatsFile: <span class="literal">false</span>,</span><br><span class="line">    statsFilename: <span class="string">&#x27;stats.json&#x27;</span>,</span><br><span class="line">    statsOptions: <span class="literal">null</span>,</span><br><span class="line">    logLevel: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 <p>当项目build后会出现一个页面，其中包含各种的占比和其大小，根据该图能针对不同的包进行操作。</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="1572861934155"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="包裹大小"></p>
 <h4 id="2-element-ui的按需加载"><a href="#2-element-ui的按需加载" class="headerlink" title="2.element-ui的按需加载"></a>2.element-ui的按需加载</h4><p>​        当element-ui全局引入时，打包出来的文件十分大，因此要按需引入</p>
 <p>​        但想对element-ui按需加载需要需要组件来帮助<a target="_blank" rel="noopener" href="https://github.com/QingWei-Li/babel-plugin-component">babel-plugin-component</a></p>
 <p>​        首先，安装 babel-plugin-component：</p>
@@ -251,12 +338,12 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; Button, Select &#125; <span class="keyword">from</span> <span class="string">&#x27;element-ui&#x27;</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line">Vue.component(Button.name, Button)</span><br><span class="line">Vue.component(Select.name, Select)</span><br><span class="line"><span class="comment">/* 或写为</span></span><br><span class="line"><span class="comment"> * Vue.use(Button)</span></span><br><span class="line"><span class="comment"> * Vue.use(Select)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
 <p>实现效果如下：</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="1572862377991"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="按需加载"></p>
 <h4 id="3-组件按需加载"><a href="#3-组件按需加载" class="headerlink" title="3.组件按需加载"></a>3.组件按需加载</h4><p>​        如图所示</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="1572862490945"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="组件按需加载"></p>
 <h4 id="4-cdn引入"><a href="#4-cdn引入" class="headerlink" title="4.cdn引入"></a>4.cdn引入</h4><p>​        在index.html中引入cdn资源</p>
 <p>​            如图所示</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="1572862844298"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="cdn"></p>
 <p>​        修改 build/webpack.base.conf.js ，添加或修改externals</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">    <span class="string">&#x27;vue&#x27;</span>: <span class="string">&#x27;Vue&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vue-router&#x27;</span>: <span class="string">&#x27;VueRouter&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vuex&#x27;</span>: <span class="string">&#x27;Vuex&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;axios&#x27;</span>: <span class="string">&#x27;axios&#x27;</span> </span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
 
@@ -271,7 +358,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">webpackConfig.plugins.push(</span><br><span class="line">       <span class="keyword">new</span> CompressionWebpackPlugin(&#123;</span><br><span class="line">           asset: <span class="string">&#x27;[path].gz[query]&#x27;</span>,</span><br><span class="line">           algorithm: <span class="string">&#x27;gzip&#x27;</span>,</span><br><span class="line">           test: <span class="keyword">new</span> <span class="built_in">RegExp</span>(</span><br><span class="line">               <span class="string">&#x27;\\.(&#x27;</span> +</span><br><span class="line">               config.build.productionGzipExtensions.join(<span class="string">&#x27;|&#x27;</span>) +</span><br><span class="line">               <span class="string">&#x27;)$&#x27;</span></span><br><span class="line">           ),</span><br><span class="line">           threshold: <span class="number">10240</span>,</span><br><span class="line">           minRatio: <span class="number">0.8</span></span><br><span class="line">       &#125;)</span><br><span class="line">   )</span><br></pre></td></tr></table></figure>
 
 <p>最后在config/index.js中将productionGzip设置为true就可以了</p>
-<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="1572916447286"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="config修改"></p>
 <p>​    然后到了服务器配置了，我用的node作为服务器运行，因此讲下如何配置node的</p>
 <p>​        1.express</p>
 <p>​            先安装一个依赖</p>
@@ -301,6 +388,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -315,6 +404,10 @@
   <time class="dt-published" datetime="2021-02-24T08:52:23.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -377,6 +470,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -391,6 +486,10 @@
   <time class="dt-published" datetime="2021-02-24T08:36:20.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -447,6 +546,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -461,6 +562,10 @@
   <time class="dt-published" datetime="2021-02-24T08:06:13.000Z" itemprop="datePublished">2021-02-24</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -528,6 +633,8 @@
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Promise/" rel="tag">Promise</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+
     </footer>
   </div>
   
@@ -543,12 +650,33 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Promise/" rel="tag">Promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/tags/javascript/" style="font-size: 20px;">javascript</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -567,6 +695,10 @@
       <ul>
         
           <li>
+            <a href="/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/">神奇的定时器</a>
+          </li>
+        
+          <li>
             <a href="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/">事件循环---Event Loop</a>
           </li>
         
@@ -580,10 +712,6 @@
         
           <li>
             <a href="/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/">Javascript同步与异步问题</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/24/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3Promise/">初步了解Promise</a>
           </li>
         
       </ul>
