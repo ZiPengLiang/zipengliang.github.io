@@ -1,7 +1,9 @@
 ---
 title: '事件循环---Event Loop'
 date: 2021-02-24 17:08:53
-tags:
+tags: 
+ - javascript
+categories: 技术
 ---
 
 
