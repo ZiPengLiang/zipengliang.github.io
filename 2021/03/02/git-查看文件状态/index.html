@@ -4,16 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>标签 | ZiPeng</title>
+  <title>git-查看文件状态 | ZiPeng</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="标签">
-<meta property="og:url" content="http://example.com/tags/index.html">
+  <meta name="description" content="运行git status命令看看结果 123456789git statusOn branch masterChanges not staged for commit:  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)  (use &quot;git checkout -- &lt;file&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git-查看文件状态">
+<meta property="og:url" content="http://example.com/2021/03/02/git-%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81/index.html">
 <meta property="og:site_name" content="ZiPeng">
+<meta property="og:description" content="运行git status命令看看结果 123456789git statusOn branch masterChanges not staged for commit:  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)  (use &quot;git checkout -- &lt;file&amp;gt">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-02-25T07:41:47.000Z">
-<meta property="article:modified_time" content="2021-02-25T07:43:00.503Z">
+<meta property="article:published_time" content="2021-03-02T08:09:44.000Z">
+<meta property="article:modified_time" content="2021-03-02T08:16:45.633Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="ZiPeng" type="application/atom+xml">
@@ -71,12 +74,16 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-git-查看文件状态" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/tags/index.html" class="article-date">
-  <time class="dt-published" datetime="2021-02-25T07:41:47.000Z" itemprop="datePublished">2021-02-25</time>
+    <a href="/2021/03/02/git-%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81/" class="article-date">
+  <time class="dt-published" datetime="2021-03-02T08:09:44.000Z" itemprop="datePublished">2021-03-02</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -85,7 +92,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      标签
+      git-查看文件状态
     </h1>
   
 
@@ -93,18 +100,53 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <p>运行<code>git status</code>命令看看结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">On branch master</span><br><span class="line">Changes not staged for commit:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)</span><br><span class="line">  (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)</span><br><span class="line"></span><br><span class="line">	modified:   readme.txt</span><br><span class="line"></span><br><span class="line">no changes added to commit (use &quot;git add&quot; and&#x2F;or &quot;git commit -a&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><code>git status</code>命令可以让我们时刻掌握仓库当前的状态，上面的命令输出告诉我们，<code>readme.txt</code>被修改过了，但还没有准备提交的修改。</p>
+<p>通过<code>git diff</code>查看上次的修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ git diff readme.txt </span><br><span class="line">diff --git a&#x2F;readme.txt b&#x2F;readme.txt</span><br><span class="line">index 46d49bf..9247db6 100644</span><br><span class="line">--- a&#x2F;readme.txt</span><br><span class="line">+++ b&#x2F;readme.txt</span><br><span class="line">@@ -1,2 +1,2 @@</span><br><span class="line">-Git is a version control system.</span><br><span class="line">+Git is a distributed version control system.</span><br><span class="line"> Git is free software.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>小结：</p>
+<ul>
+<li>要随时掌握工作区的状态，使用<code>git status</code>命令。</li>
+<li>如果<code>git status</code>告诉你有文件被修改过，用<code>git diff</code>可以查看修改内容。</li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/tags/index.html" data-id="cklkk9rjz0002e0w42hsbdx75" data-title="标签" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/03/02/git-%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81/" data-id="cklrqx7pq0006g8w4e6ds9yh4" data-title="git-查看文件状态" class="article-share-link">Share</a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/" rel="tag">Git</a></li></ul>
+
     </footer>
   </div>
   
     
+<nav id="article-nav">
+  
+    <a href="/2021/03/02/git-%E5%BA%93%E6%93%8D%E4%BD%9C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          git-库操作
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/02/git-%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">git-版本回退</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
