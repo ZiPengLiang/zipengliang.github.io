@@ -6,12 +6,12 @@
   
   <title>首屏加载优化 | ZiPeng</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题  1.解决思路​    1.压缩代码和图片 ​    2.组件和图片按需加载 ​    3.通过cdn引入资源，避免将其直接打包 ​    4.通过gzip搭配服务器压缩代码（重点） ​         2.解决方法1.了解项目所有包的占比​        运用一款打包分析工具Webpack Bund">
+  <meta name="description" content="背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题  1.解决思路​    1.压缩代码和图片 ​    2.组件和图片按需加载 ​    3.通过cdn引入资源，避免将其直接打包 ​    4.通过gzip搭配服务器压缩代码（重点）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="首屏加载优化">
 <meta property="og:url" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="ZiPeng">
-<meta property="og:description" content="背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题  1.解决思路​    1.压缩代码和图片 ​    2.组件和图片按需加载 ​    3.通过cdn引入资源，避免将其直接打包 ​    4.通过gzip搭配服务器压缩代码（重点） ​         2.解决方法1.了解项目所有包的占比​        运用一款打包分析工具Webpack Bund">
+<meta property="og:description" content="背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题  1.解决思路​    1.压缩代码和图片 ​    2.组件和图片按需加载 ​    3.通过cdn引入资源，避免将其直接打包 ​    4.通过gzip搭配服务器压缩代码（重点）">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png">
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png">
@@ -20,7 +20,7 @@
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png">
 <meta property="og:image" content="http://example.com/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png">
 <meta property="article:published_time" content="2021-02-24T08:53:26.000Z">
-<meta property="article:modified_time" content="2021-02-25T08:35:38.111Z">
+<meta property="article:modified_time" content="2021-03-02T07:43:44.161Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="javascript">
 <meta property="article:tag" content="Vue">
@@ -115,7 +115,8 @@
 <p>​    2.组件和图片按需加载</p>
 <p>​    3.通过cdn引入资源，避免将其直接打包</p>
 <p>​    4.通过gzip搭配服务器压缩代码（重点）</p>
-<p>​        </p>
+<span id="more"></span>        
+
 <h3 id="2-解决方法"><a href="#2-解决方法" class="headerlink" title="2.解决方法"></a>2.解决方法</h3><h4 id="1-了解项目所有包的占比"><a href="#1-了解项目所有包的占比" class="headerlink" title="1.了解项目所有包的占比"></a>1.了解项目所有包的占比</h4><p>​        运用一款打包分析工具Webpack Bundle Analyzer来清晰得了解项目包的情况</p>
 <p>​        安装：    </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev webpack-bundle-analyzer &#x2F;&#x2F;npm安装</span><br><span class="line">yarn add -s webpack-bundle-analyzer -D&#x2F;&#x2F;yarn 安装</span><br></pre></td></tr></table></figure>
