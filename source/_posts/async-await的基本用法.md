@@ -32,7 +32,7 @@ asyncCall();
 //resolved
 ```
 
-
+<!--more-->
 
 #### 语法
 

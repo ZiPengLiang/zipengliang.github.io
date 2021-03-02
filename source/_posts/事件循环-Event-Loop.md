@@ -16,7 +16,7 @@ categories: 技术
 
 javascript的另一个特点就是非阻塞，至于javascript是如何做到非阻塞的呢，答案就是本文要记录的---event loop（事件循环）
 
-
+<!--more-->
 
 ### 正文
 

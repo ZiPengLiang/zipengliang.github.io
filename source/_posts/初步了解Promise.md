@@ -23,7 +23,9 @@ categories: 技术
 })
 ```
 
-​		用法：
+<!--more-->		
+
+用法：
 
 在创建Promise时能通过传入一个带有resolve和reject参数的callback函数，并在Promise执行时立即执行，resolve和reject两个函数作为参数传到callback函数中，并起到修改promise状态的作用。
 

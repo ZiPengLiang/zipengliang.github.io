@@ -2,7 +2,7 @@
 title: vue-cl3搭建项目
 date: 2021-02-25 16:41:48
 tags: 
- - vue
+ - Vue
 categories: 技术
 ---
 
@@ -22,7 +22,7 @@ categories: 技术
 
 4. 安装了vue
 
-
+<!--more-->
 
 ## 创建项目步骤
 
