@@ -99,6 +99,7 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: landscape
 
+
 deploy:
   type: git
   repository: git@github.com:ZiPengLiang/zipengliang.github.io.git
