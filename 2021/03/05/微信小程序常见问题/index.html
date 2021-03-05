@@ -6,15 +6,15 @@
   
   <title>微信小程序常见问题 | ZiPeng</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="IOS遇到的问题1.ios中new Date()时间格式不兼容 在后端返回了时间的格式是‘2020-01-01 16:50:50’时，在安卓上可以显示，但到了ios上无法显示了 原因是ios的时间格式是不兼容时间中出现”-“的，通过正则将时间中的**’-‘替换为‘&#x2F;‘** 12345678910111213let time &#x3D; &amp;#x27;2018-12-10 11:11:11&amp;#x27;;let">
+  <meta name="description" content="开发遇到的问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="微信小程序常见问题">
 <meta property="og:url" content="http://example.com/2021/03/05/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="ZiPeng">
-<meta property="og:description" content="IOS遇到的问题1.ios中new Date()时间格式不兼容 在后端返回了时间的格式是‘2020-01-01 16:50:50’时，在安卓上可以显示，但到了ios上无法显示了 原因是ios的时间格式是不兼容时间中出现”-“的，通过正则将时间中的**’-‘替换为‘&#x2F;‘** 12345678910111213let time &#x3D; &amp;#x27;2018-12-10 11:11:11&amp;#x27;;let">
+<meta property="og:description" content="开发遇到的问题">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-05T03:49:36.000Z">
-<meta property="article:modified_time" content="2021-03-05T03:51:22.999Z">
+<meta property="article:modified_time" content="2021-03-05T06:14:11.608Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="微信小程序">
 <meta name="twitter:card" content="summary">
@@ -100,7 +100,12 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="IOS遇到的问题"><a href="#IOS遇到的问题" class="headerlink" title="IOS遇到的问题"></a>IOS遇到的问题</h2><p>1.ios中new Date()时间格式不兼容</p>
+        <blockquote>
+<p>开发遇到的问题</p>
+</blockquote>
+<span id="more"></span>        
+
+<h2 id="IOS遇到的问题"><a href="#IOS遇到的问题" class="headerlink" title="IOS遇到的问题"></a>IOS遇到的问题</h2><p>1.ios中new Date()时间格式不兼容</p>
 <p>在后端返回了时间的格式是‘2020-01-01 16:50:50’时，在安卓上可以显示，但到了ios上无法显示了</p>
 <p>原因是ios的时间格式是不兼容时间中出现”-“的，通过正则将时间中的**’-‘<strong>替换为</strong>‘/‘**</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> time = <span class="string">&#x27;2018-12-10 11:11:11&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> temporaryTime1 = <span class="keyword">new</span> <span class="built_in">Date</span>(time);</span><br><span class="line"><span class="built_in">this</span>.setData(&#123;</span><br><span class="line">   timeRemain1: temporaryTime1,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">/* 利用正则表达式替换时间中的”-”为”/”即可 */</span></span><br><span class="line"><span class="keyword">let</span> time = <span class="string">&#x27;2018-12-10 11:11:11&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> temporaryTime = <span class="keyword">new</span> <span class="built_in">Date</span>(time.replace(<span class="regexp">/-/g</span>,<span class="string">&#x27;/&#x27;</span>));</span><br><span class="line"><span class="keyword">let</span> temporaryTime1 = <span class="keyword">new</span> <span class="built_in">Date</span>(time);</span><br><span class="line"><span class="built_in">this</span>.setData(&#123;</span><br><span class="line">    timeRemain: temporaryTime,</span><br><span class="line">    timeRemain1: temporaryTime1,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
