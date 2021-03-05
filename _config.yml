@@ -97,10 +97,17 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+##landscape
+theme: next
 
 
 deploy:
   type: git
   repository: git@github.com:ZiPengLiang/zipengliang.github.io.git
   branch: master
+
+search:
+path: search.xml
+field: post
+format: html
+limit: 10000
