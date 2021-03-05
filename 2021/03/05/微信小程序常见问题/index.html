@@ -14,7 +14,7 @@
 <meta property="og:description" content="开发遇到的问题">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-05T03:49:36.000Z">
-<meta property="article:modified_time" content="2021-03-05T06:14:11.608Z">
+<meta property="article:modified_time" content="2021-03-05T06:15:22.675Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="微信小程序">
 <meta name="twitter:card" content="summary">
@@ -116,7 +116,7 @@
 
 
 
-<h2 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h2><h3 id="父组件给子组件传值"><a href="#父组件给子组件传值" class="headerlink" title="父组件给子组件传值"></a>父组件给子组件传值</h3><h4 id="子组件介绍父组件的值"><a href="#子组件介绍父组件的值" class="headerlink" title="子组件介绍父组件的值"></a>子组件介绍父组件的值</h4><p>子组件在properties中定义需要从父组件中接受的值</p>
+<h2 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h2><h3 id="父组件给子组件传值"><a href="#父组件给子组件传值" class="headerlink" title="父组件给子组件传值"></a>父组件给子组件传值</h3><h4 id="子组件接受父组件的值"><a href="#子组件接受父组件的值" class="headerlink" title="子组件接受父组件的值"></a>子组件接受父组件的值</h4><p>子组件在properties中定义需要从父组件中接受的值</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">properties: &#123;</span><br><span class="line">   <span class="comment">//标题</span></span><br><span class="line">   title: &#123;</span><br><span class="line">     type: <span class="built_in">String</span>,</span><br><span class="line">     value: <span class="string">&#x27;出勤天数&#x27;</span></span><br><span class="line">   &#125;,</span><br><span class="line">   titleData: &#123;</span><br><span class="line">     type: <span class="built_in">String</span>,</span><br><span class="line">     value: <span class="string">&#x27;20天&#x27;</span></span><br><span class="line">   &#125;,</span><br><span class="line">   isDrop: &#123;</span><br><span class="line">     type: <span class="built_in">Boolean</span>,</span><br><span class="line">     value: <span class="literal">true</span></span><br><span class="line">   &#125;,</span><br><span class="line">   state: &#123;</span><br><span class="line">     type: <span class="built_in">Boolean</span>,</span><br><span class="line">     value: <span class="literal">false</span></span><br><span class="line">   &#125;,</span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
 
 <h4 id="父组件向子组件穿参数"><a href="#父组件向子组件穿参数" class="headerlink" title="父组件向子组件穿参数"></a>父组件向子组件穿参数</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;childer title=<span class="string">&#x27;&#123;&#123;father_data&#125;&#125;&#x27;</span> titleData=<span class="string">&#x27;&#123;&#123;20&#125;&#125;&#x27;</span>  /&gt;</span><br></pre></td></tr></table></figure>
