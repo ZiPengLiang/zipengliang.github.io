@@ -1254,4 +1254,305 @@
         <tag>CSS</tag>
       </tags>
   </entry>
+  <entry>
+    <title>vue组件通信</title>
+    <url>/2021/03/15/vue%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<h2 id="prop-emit"><a href="#prop-emit" class="headerlink" title="prop/$emit"></a>prop/$emit</h2><p>父组件：通过<code>prop</code>的方式向子组件传递数据</p>
+<p>子组件：通过<code>$emit</code>可以向父组件通信。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    当前选中：&#123;&#123; current &#125;&#125;</span><br><span class="line">    &lt;Child :list=<span class="string">&quot;list&quot;</span> @change=<span class="string">&quot;changeCurrent&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      current: <span class="number">0</span>,</span><br><span class="line">      list: [<span class="string">&quot;红楼梦&quot;</span>, <span class="string">&quot;水浒传&quot;</span>, <span class="string">&quot;三国演义&quot;</span>, <span class="string">&quot;西游记&quot;</span>]</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">changeCurrent</span>(<span class="params">num</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//监听子组件传过来的数据</span></span><br><span class="line">      <span class="built_in">this</span>.current = num;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in list&quot;</span>&gt;</span><br><span class="line">      &lt;div @click=<span class="string">&quot;clickItem(index)&quot;</span> :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    list: &#123;</span><br><span class="line">      type: <span class="built_in">Array</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickItem</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;change&quot;</span>, index);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<p>​    传值取值方便简洁明了</p>
+<p>缺点：</p>
+<ol>
+<li>由于数据是单向传递，如果子组件需要改变父组件的props值每次需要给子组件绑定对应的监听事件。</li>
+<li>如果父组件需要给孙组件传值，需要子组件进行转发，较为不便。</li>
+</ol>
+<h2 id="sync修饰符"><a href="#sync修饰符" class="headerlink" title=".sync修饰符"></a>.sync修饰符</h2><p>在子组件能够直接修改父组件的prop值</p>
+<p><code>vue1.x</code> 时，曾作为双向绑定功能存在，即子组件可以修改父组件中的值</p>
+<p><code>vue2.0</code>时，违反了单向数据流的设计理念–删除</p>
+<p><code>vue2.3.0+</code>是，重新引入，作为一个编译时的语法糖存在—它会被扩展为一个自动更新父组件属性的<code>v-on</code>监听器。说白了就是手动进行更新父组件中的值了，从而使数据改动来源更加的明显。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child :msg.sync=<span class="string">&quot;msg&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;way2&quot;</span>,</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      msg: <span class="string">&quot;hello every guys&quot;</span>,</span><br><span class="line">      num: <span class="number">0</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在Child组件传值时给每个值添加一个.sync修饰，在编译时会被扩展为如下代码：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;Child :msg=<span class="string">&quot;msg&quot;</span> @update.msg=<span class="string">&quot;val =&gt; msg = val&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span> @update.num=<span class="string">&quot;val =&gt; num = val&quot;</span>&gt;&lt;/Child&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此子组件中只需要显示的触发update的更新事件：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickRevert&quot;</span>&gt;点击更新字符串：&#123;&#123; msg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;当前值：&#123;&#123; num &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;add&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;+&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;sub&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;-&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    msg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    num: &#123;</span><br><span class="line">      type: <span class="built_in">Number</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickRevert</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; msg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:msg&quot;</span>,msg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>));</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">clickOpt</span>(<span class="params">type = <span class="string">&quot;&quot;</span></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; num &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="keyword">if</span> (type == <span class="string">&quot;add&quot;</span>) &#123;</span><br><span class="line">        num++;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        num--;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:num&quot;</span>, num);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>和<code>v-model</code>同理，v-model本质上也是一种语法糖，只不过它触发的不是update方法而是input方法；而且v-model没有.sync来的更加灵活，v-model只能绑定一个值</p>
+<h2 id="attrs和-listeners"><a href="#attrs和-listeners" class="headerlink" title="$attrs和$listeners"></a>$attrs和$listeners</h2><p>当从A到C的跨级通信时，prop传值会非常麻烦，会有很多冗余繁琐的转发操作；如果C中的状态改变还需要传递给A，使用事件还需要一级一级的向上传递，代码可读性就更差了。</p>
+<p><img src="/2021/03/15/vue%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/attrs.jpg"></p>
+<p>解决方案 ：<code>vue2.4+</code>版本提供了新的方案：<code>$attrs和$listeners</code>，</p>
+<blockquote>
+<p>`$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 (class 和 style 除外)，并且可以通过 v-bind=”$attrs” 传入内部组件——在创建高级别的组件时非常有用。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child</span><br><span class="line">      :notUse=<span class="string">&quot;&#x27;not-use&#x27;&quot;</span> <span class="comment">// 没用的信息</span></span><br><span class="line">      :childMsg=<span class="string">&quot;childMsg&quot;</span>  <span class="comment">// 传给子组件的信息</span></span><br><span class="line">      :grandChildMsg=<span class="string">&quot;grandChildMsg&quot;</span>  <span class="comment">//传给孙组件的信息</span></span><br><span class="line">      @onChildMsg=<span class="string">&quot;onChildMsg&quot;</span>  <span class="comment">// 子组件function</span></span><br><span class="line">      @onGrandChildMsg=<span class="string">&quot;onGrandChildMsg&quot;</span>  <span class="comment">//孙组件function</span></span><br><span class="line">    &gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childMsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandChildMsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">onChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childMsg = msg;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">onGrandChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.grandChildMsg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickMsg&quot;</span>&gt;&#123;&#123; childMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;$attrs: &#123;&#123; $attrs &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild v-bind=<span class="string">&quot;$attrs&quot;</span> v-on=<span class="string">&quot;$listeners&quot;</span>&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    childMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; childMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">          <span class="string">&quot;onChildMsg&quot;</span>,</span><br><span class="line">          childMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; GrandChild &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在子组件中，通过props获取子组件所需要的参数，即childMsg；</p>
+<p>剩余的参数就被归到了<code>$attrs</code>对象中，然后把它继续往孙组件中传；同时把所有的监听函数归到$listeners，也继续往下传。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box1&quot;</span> @click=<span class="string">&quot;clickMsg&quot;</span>&gt;grand-child:&#123;&#123; grandChildMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    grandChildMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; grandChildMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">        <span class="string">&quot;onGrandChildMsg&quot;</span>,</span><br><span class="line">        grandChildMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>总结：$attrs和$listeners很好的解决了<code>跨一级</code>组件传值的问题。但是不适合做多级组件的传值问题</p>
+<h2 id="provide和inject"><a href="#provide和inject" class="headerlink" title="provide和inject"></a>provide和inject</h2><p>用来做多级组件数据的传值</p>
+<p>provide/inject是<code>vue2.2+</code>版本新增的属性，简单来说就是父组件中通过provide来提供变量, 然后再子组件中通过inject来注入变量。这里inject注入的变量不像<code>$attrs</code>，只能向下一层；inject不论子组件嵌套有多深，都能获取到。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandmsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">    <span class="comment">//提供变量</span></span><br><span class="line">  <span class="function"><span class="title">provide</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="built_in">this</span>.childmsg,</span><br><span class="line">      grandmsg: <span class="built_in">this</span>.grandmsg</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childmsg = <span class="string">&quot;hello new child&quot;</span>;</span><br><span class="line">      <span class="built_in">this</span>.grandmsg = <span class="string">&quot;hello new grand child&quot;</span>;</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">  components: &#123; GrandChild &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;GrandChild&quot;</span>,</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：</p>
+<p>​    1.一旦子组件注入了某个数据，在data中就不能再声明这个数据了</p>
+<p>​    2.<code>provide</code> 和 <code>inject</code> 绑定并不是可响应的。这是刻意为之的。然而，如果你传入了一个可监听的对象，那么其对象的属性还是可响应的</p>
+<h2 id="EventBus-—兄弟间组件通行"><a href="#EventBus-—兄弟间组件通行" class="headerlink" title="EventBus —兄弟间组件通行"></a>EventBus —兄弟间组件通行</h2><p>实际上是创建一个vue实例，通过一个空的vue实例作为桥梁实现vue组件间的通信。它是实现非父子组件通信的一种解决方案，所有的组件都可以上下平行地通知其他组件，但也就是太方便所以若使用不慎，就会造成难以维护的“灾难”</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//utils/event-bus.js</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Vue();</span><br></pre></td></tr></table></figure>
+
+<p>首先创造一个空的vue对象并将其导出，他是一个不具备<code>DOM</code>的组件，它具有的仅仅只是它实例方法而已，因此它非常的轻便。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//main.js</span></span><br><span class="line"><span class="keyword">import</span> bus <span class="keyword">from</span> <span class="string">&quot;@/utils/event-bus&quot;</span>;</span><br><span class="line">Vue.prototype.$bus = bus;</span><br></pre></td></tr></table></figure>
+
+<p>将其挂载到全局，变成全局的事件总线，这样在组件中就能很方便的调用了。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;Child1&gt;&lt;/Child1&gt;</span><br><span class="line">    &lt;Child2&gt;&lt;/Child2&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child1 <span class="keyword">from</span> <span class="string">&quot;./child1&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> Child2 <span class="keyword">from</span> <span class="string">&quot;./child2&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child1,</span><br><span class="line">    Child2</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实现兄弟组件间的通信</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child1.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg1&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg2&quot;</span>, <span class="string">&quot;hello from1:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//child2.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg2&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg1&quot;</span>, <span class="string">&quot;hello from2:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用不善，EventBus会是一种灾难，到底是什么样的“灾难”了？大家都知道vue是单页应用，如果你在某一个页面刷新了之后，与之相关的EventBus会被移除，这样就导致业务走不下去。还要就是如果业务有反复操作的页面，EventBus在监听的时候就会触发很多次，也是一个非常大的隐患。这时候我们就需要好好处理EventBus在项目中的关系。通常会用到，在页面或组件销毁时，同时移除EventBus事件监听。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>&#123;</span><br><span class="line">    <span class="function"><span class="title">destroyed</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        $EventBus.$off(<span class="string">&#x27;event-name&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：EventBus可以用来很方便的实现兄弟组件和跨级组件的通信，但是使用不当时也会带来很多问题；所以适合逻辑并不复杂的小页面，逻辑复杂时还是建议使用vuex。</p>
+<p>原文来源：<a href="https://zhuanlan.zhihu.com/p/119350263">Vue中组件通信的方式</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Vue面试题</title>
+    <url>/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="vue、react、angular三者有什么区别？"><a href="#vue、react、angular三者有什么区别？" class="headerlink" title="vue、react、angular三者有什么区别？"></a>vue、react、angular三者有什么区别？</h1><p>vue.js通过简单的API（应用程序编程接口）提供高效的数据绑定和灵活的组件系统。</p>
+<p>Vue.js的特性如下：</p>
+<p>1.轻量级的框架</p>
+<p>2.双向数据绑定</p>
+<p>3.指令</p>
+<p>4.插件化</p>
+<h2 id="1、与AngularJS的区别"><a href="#1、与AngularJS的区别" class="headerlink" title="1、与AngularJS的区别"></a><strong>1、与AngularJS的区别</strong></h2><p>特点：</p>
+<p>1.良好的应用程序结构</p>
+<p>2.双向数据绑定</p>
+<p>3.指令</p>
+<p>4.HTML模板</p>
+<p>5.可嵌入、注入和测试</p>
+<h3 id="相同点："><a href="#相同点：" class="headerlink" title="相同点："></a>相同点：</h3><p>1.都支持指令：内置指令和自定义指令。</p>
+<p>2.都支持过滤器：内置过滤器和自定义过滤器。</p>
+<p>3.都支持双向数据绑定。</p>
+<p>4.都不支持低端浏览器。</p>
+<h3 id="不同点："><a href="#不同点：" class="headerlink" title="不同点："></a>不同点：</h3><p>1.AngularJS的学习成本高，比如增加了Dependency Injection特性，而Vue.js本身提供的API都比较简单、直观。</p>
+<p>2.在性能上，AngularJS依赖对数据做脏检查，所以Watcher越多越慢。</p>
+<p>Vue.js使用基于依赖追踪的观察并且使用异步队列更新。所有的数据都是独立触发的。</p>
+<p>对于庞大的应用来说，这个优化差异还是比较明显的。</p>
+<h2 id="2、与React的区别"><a href="#2、与React的区别" class="headerlink" title="2、与React的区别"></a><strong>2、与React的区别</strong></h2><h3 id="相同点：-1"><a href="#相同点：-1" class="headerlink" title="相同点："></a>相同点：</h3><p>1.React采用特殊的JSX语法，Vue.js在组件开发中也推崇编写.vue特殊文件格式，对文件内容都有一些约定，两者都需要编译后使用。</p>
+<p>2.中心思想相同：一切都是组件，组件实例之间可以嵌套。</p>
+<p>3.都提供合理的钩子函数，可以让开发者定制化地去处理需求。</p>
+<p>4.都不内置列数AJAX，Route等功能到核心包，而是以插件的方式加载。</p>
+<p>5.在组件开发中都支持mixins的特性。</p>
+<h3 id="不同点：-1"><a href="#不同点：-1" class="headerlink" title="不同点："></a>不同点：</h3><p>React依赖Virtual DOM,而Vue.js使用的是DOM模板。React采用的Virtual DOM会对渲染出来的结果做脏检查。</p>
+<p>Vue.js在模板中提供了指令，过滤器等，可以非常方便，快捷地操作DOM。</p>
+<h1 id="vue-的认识与介绍"><a href="#vue-的认识与介绍" class="headerlink" title="vue 的认识与介绍"></a>vue 的认识与介绍</h1><h2 id="1、渐进式框架Vue"><a href="#1、渐进式框架Vue" class="headerlink" title="1、渐进式框架Vue"></a><strong>1、渐进式框架Vue</strong></h2><p>Vue.js 是一套构建用户界面的渐进式框架。与其他重量级框架不同的是，Vue 采用自底向上增量开发的设计。</p>
+<p>渐进式 – 阶梯式向前，vue是轻量级的，它有很多独立的功能或库，能根据不同的需求使用不同的功能</p>
+<p>渐进式表现：声明式渲染——组件系统——客户端路由——-大数据状态管理——-构建工具</p>
+<h2 id="2、vue中两个核心点"><a href="#2、vue中两个核心点" class="headerlink" title="2、vue中两个核心点"></a><strong>2、vue中两个核心点</strong></h2><h3 id="1）响应式数据绑定"><a href="#1）响应式数据绑定" class="headerlink" title="1）响应式数据绑定"></a>1）响应式数据绑定</h3><p>当数据发生变化是，vue自动更新视图</p>
+<p>原理：</p>
+<p>​    Vue2.0:利用了 Object.definedProperty 中的setter/getter 代理数据，监控对数据的操作。</p>
+<p>​    Vue3.0:直接采用了Proxy来监听数据的变化</p>
+<h3 id="2）组合的视图组件"><a href="#2）组合的视图组件" class="headerlink" title="2）组合的视图组件"></a>2）组合的视图组件</h3><p>ui页面映射为组件书</p>
+<p>划分组件可维护、可重用、可测试</p>
+<h2 id="3、虚拟DOM"><a href="#3、虚拟DOM" class="headerlink" title="3、虚拟DOM"></a><strong>3、虚拟DOM</strong></h2><p>大量的Dom操作会导致页面加载十分缓慢，通常在数据变化的时候，JS会通过处理DOM来更新视图数据，但是在更新页面后会导致页面重新渲染，这样的结果就是无需修改数据的地方也会重新渲染DOM节点。这样性能方面就会很受影响。</p>
+<p>虚拟DOM–利用在内存中生成与真实DOM与之对应的数据结构，这个在内存中生成的结构称之为虚拟DOM。</p>
+<p>当数据发生变化时，能够智能的计算出重新渲染组件的最小代价并应用到DOM操作上 （相关知识点 diff算法）</p>
+<h2 id="4、MVVM-MVC-MVP-之前的区别"><a href="#4、MVVM-MVC-MVP-之前的区别" class="headerlink" title="4、MVVM MVC MVP 之前的区别"></a><strong>4、MVVM MVC MVP 之前的区别</strong></h2><h3 id="1）-MVC"><a href="#1）-MVC" class="headerlink" title="1） MVC"></a>1） MVC</h3><p>MVC模式的意思是，软件可以分成三个部分。</p>
+<ul>
+<li>视图（View）：用户界面。</li>
+<li>控制器（Controller）：业务逻辑</li>
+<li>模型（Model）：数据保存</li>
+</ul>
+<p>通信方式：</p>
+<p>​    <img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/MVC.png" alt="MVC模式"></p>
+<ol>
+<li>View 传送指令到 Controller</li>
+<li>Controller 完成业务逻辑后，要求 Model 改变状态</li>
+<li>Model 将新的数据发送到 View，用户得到反馈</li>
+</ol>
+<p>所有通信都是单向的</p>
+<p>互动模式：</p>
+<p>（1）通过 View 接受指令，传递给 Controller。</p>
+<p>（2）直接通过controller接受指令。</p>
+<h3 id="2）MVP"><a href="#2）MVP" class="headerlink" title="2）MVP"></a>2）MVP</h3><p>MVP 模式将 Controller 改名为 Presenter，同时改变了通信方向。</p>
+<p><img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/MVP.png" alt="MVP模式"></p>
+<ul>
+<li>各部分之间的通信，都是双向的。</li>
+<li>View 与 Model 不发生联系，都通过 Presenter 传递。</li>
+<li>View 非常薄，不部署任何业务逻辑，称为”被动视图”（Passive View），即没有任何主动性，而 Presenter非常厚，所有逻辑都部署在那里。</li>
+</ul>
+<h3 id="3）MVVM"><a href="#3）MVVM" class="headerlink" title="3）MVVM"></a>3）MVVM</h3><p>MVVM 模式将 Presenter 改名为 ViewModel，基本上与 MVP 模式完全一致。</p>
+<p>M： model （数据层，也就是指数据（前端是js））</p>
+<p>V：view ( 也就是指DOM层 或用户界面 )</p>
+<p>VM : view-model (处理数据和界面的中间层)</p>
+<p>唯一的区别是，它采用双向绑定（data-binding）：View的变动，自动反映在 ViewModel，反之亦然</p>
+<p>Vue 采用的就是这种模式</p>
+<h2 id="5、vue是如何实现响应式数据的呢？（响应式数据原理）"><a href="#5、vue是如何实现响应式数据的呢？（响应式数据原理）" class="headerlink" title="5、vue是如何实现响应式数据的呢？（响应式数据原理）"></a>5、vue是如何实现响应式数据的呢？（响应式数据原理）</h2><h3 id="VUE-2-0"><a href="#VUE-2-0" class="headerlink" title="VUE 2.0"></a>VUE 2.0</h3><p>通过<code>Object.defineProperty</code>重新定义data中所有的属性，简单来说就是通过遍历所有data的数据，并设置其setting和geting属性来实现监听数据的变化</p>
+<p>但是这种方式具有极大的局限性，由于 JavaScript 的限制，Vue <strong>不能检测</strong>数组和对象的变化。</p>
+<ul>
+<li>对于对象 无法监听对象的删除和添加</li>
+<li>对于数组 利用索引直接设置一个数组项以及修改数组的长度时无法检测到数组的变化</li>
+</ul>
+<p>不止如此，Object.defineProperty通过遍历所有的属性，当数据量一大起来，加载速度就无比的慢。</p>
+<p>还有，由于Object.defineProperty是监听所有属性的变化，那么如果数据量巨大的话，所占的内存也会无比的多</p>
+<h3 id="VUE-3-0"><a href="#VUE-3-0" class="headerlink" title="VUE 3.0"></a>VUE 3.0</h3><p><strong>Proxy</strong> 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。</p>
+<p>也就是无论访问对象的什么属性，之前定义的或是新增的属性，都会走到拦截中进行处理。这就解决了之前所无法监听的问题</p>
+<p>详细的对比:<a href="E:\随手笔记\Vue\vue响应式原理v2.0与v3.0的区别.md">vue响应式原理v2.0与v3.0的区别</a></p>
+<h2 id="6、Vue的事件绑定原理"><a href="#6、Vue的事件绑定原理" class="headerlink" title="6、Vue的事件绑定原理"></a>6、Vue的事件绑定原理</h2><p><code>Vue</code>中通过<code>v-on</code>或其语法糖<code>@</code>指令来给元素绑定事件并且提供了事件修饰符，基本流程是进行模板编译生成<code>AST(语法书)</code>，生成<code>render</code>函数后并执行得到<code>VNode</code>，<code>VNode</code>生成真实<code>DOM</code>节点或者组件时候使用<code>addEventListener</code>方法进行事件绑定。</p>
+<p>额外的知识：</p>
+<p>修饰符</p>
+<blockquote>
+<ul>
+<li><code>.stop</code>: 调用<code>event.stopPropagation()</code>，即阻止事件冒泡。</li>
+<li><code>.prevent</code>: 调用<code>event.preventDefault()</code>，即阻止默认事件。</li>
+<li><code>.capture</code>: 添加事件侦听器时使用<code>capture</code>模式，即使用事件捕获模式处理事件。</li>
+<li><code>.self</code>: 只当事件是从侦听器绑定的元素本身触发时才触发回调。</li>
+<li><code>.&#123;keyCode | keyAlias&#125;</code>: 只当事件是从特定键触发时才触发回调。</li>
+<li><code>.native</code>: 监听组件根元素的原生事件，即注册组件根元素的原生事件而不是组件自定义事件的。</li>
+<li><code>.once</code>: 只触发一次回调。</li>
+<li><code>.left(2.2.0)</code>: 只当点击鼠标左键时触发。</li>
+<li><code>.right(2.2.0)</code>: 只当点击鼠标右键时触发。</li>
+<li><code>.middle(2.2.0)</code>: 只当点击鼠标中键时触发。</li>
+<li><code>.passive(2.3.0)</code>: 以<code>&#123; passive: true &#125;</code>模式添加侦听器，表示<code>listener</code>永远不会调用<code>preventDefault()</code>。</li>
+</ul>
+</blockquote>
+<h2 id="7、v-model中的实现原理及如何自定义v-model"><a href="#7、v-model中的实现原理及如何自定义v-model" class="headerlink" title="7、v-model中的实现原理及如何自定义v-model"></a>7、v-model中的实现原理及如何自定义v-model</h2><h3 id="v-model原理"><a href="#v-model原理" class="headerlink" title="v-model原理"></a>v-model原理</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">v-model</span>=<span class="string">&quot;sth&quot;</span> /&gt;</span></span><br><span class="line">//  等同于</span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">:value</span>=<span class="string">&quot;sth&quot;</span> @<span class="attr">input</span>=<span class="string">&quot;sth = $event.target.value&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是说， v-model=”sth” 是 :value=”sth” @input=”sth = $event.target.value” 的缩写。</p>
+<p><code>v-model</code> 在内部为不同的输入元素使用不同的属性并抛出不同的事件：</p>
+<ul>
+<li>text 和 textarea 元素使用 <code>value</code> 属性和 <code>input</code> 事件；</li>
+<li>checkbox 和 radio 使用 <code>checked</code> 属性和 <code>change</code> 事件；</li>
+<li>select 字段将 <code>value</code> 作为 prop 并将 <code>change</code> 作为事件</li>
+</ul>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ul>
+<li>v-model只不过是一个语法糖而已,真正的实现靠的还是<ul>
+<li>v-bind:绑定响应式数据</li>
+<li>触发oninput 事件并传递数据</li>
+</ul>
+</li>
+</ul>
+<h3 id="自定义组件实现v-model"><a href="#自定义组件实现v-model" class="headerlink" title="自定义组件实现v-model"></a>自定义组件实现v-model</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">my-component</span> <span class="attr">v-model</span>=<span class="string">&quot;price&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">my-component</span>&gt;</span></span><br><span class="line">//  拆解如下</span><br><span class="line"><span class="tag">&lt;<span class="name">my-component</span> <span class="attr">:value</span>=<span class="string">&quot;price&quot;</span> @<span class="attr">input</span>=<span class="string">&quot;price = $event.target.value&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">my-component</span>&gt;</span></span><br><span class="line"></span><br><span class="line">//  根据这个我们可以在子组件中，进行拼凑value属性，input方法。</span><br><span class="line">Vue.component(&#x27;my-component&#x27;, &#123;</span><br><span class="line">  template: `</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span></span><br><span class="line">      &lt;input</span><br><span class="line">        type=&quot;text&quot;</span><br><span class="line">        :value=&quot;value&quot;</span><br><span class="line">        @input=&quot;$emit(&#x27;input&#x27;, $event.target.value)&quot;</span><br><span class="line">      &gt;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">  `,</span><br><span class="line">  props: [&#x27;value&#x27;],</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="8、为什么Vue采用异步渲染呢"><a href="#8、为什么Vue采用异步渲染呢" class="headerlink" title="8、为什么Vue采用异步渲染呢"></a>8、为什么Vue采用异步渲染呢</h2><p>根本原因：为了性能</p>
+<p><code>Vue</code> 是组件级更新，如果不采用异步更新，那么每次更新数据都会对当前组件进行重新渲染，所以为了性能，<code> Vue</code> 会在本轮数据更新后，在异步更新视图</p>
+<p>流程：</p>
+<p>数据变化后会调用<code>notify</code>方法，将<code>watcher</code>遍历，调用<code>update</code>方法通知<code>watcher</code>进行更新，这时候<code>watcher</code>并不会立即去执行，在<code>update</code>中会调用<code>queueWatcher</code>方法将<code>watcher</code>放到了一个队列里，在<code>queueWatcher</code>会根据<code>watcher</code>的进行去重，若多个属性依赖一个<code>watcher</code>，则如果队列中没有该<code>watcher</code>就会将该<code>watcher</code>添加到队列中，然后便会在<code>$nextTick</code>方法的执行队列中加入一个<code>flushSchedulerQueue</code>方法(这个方法将会触发在缓冲队列的所有回调的执行)，然后将<code>$nextTick</code>方法的回调加入<code>$nextTick</code>方法中维护的执行队列，<code>flushSchedulerQueue</code>中开始会触发一个<code>before</code>的方法，其实就是<code>beforeUpdate</code>，然后<code>watcher.run</code>()才开始真正执行<code>watcher</code>，执行完页面就渲染完成，更新完成后会调用<code>updated</code>钩子。</p>
+<p>数据更新 –&gt;调用<code>notify </code>,遍历<code>watcher</code>–&gt; <code>uplate</code>调用<code>queueWatcher</code>将<code>watcher</code>方静队列中 – &gt;<code>watcher</code>去重 –&gt;<code>$nextTick</code>执行队列中添加<code>flushSchedulerQueue</code>–&gt;触发<code>beforeUpdate</code> –&gt;<code>watcher.run()</code> 开始执行<code>watcher</code> –&gt;渲染完成–&gt;调用<code>update</code></p>
+<h2 id="9、了解nextTick吗"><a href="#9、了解nextTick吗" class="headerlink" title="9、了解nextTick吗"></a>9、了解nextTick吗</h2><p>假如此时我们有一个需求，需要在页面渲染完成后取得页面的<code>DOM</code>元素，而由于渲染是异步的，我们不能直接在定义的方法中同步取得这个值的，于是就有了<code>vm.$nextTick</code>方法，<code>Vue</code>中<code>$nextTick</code>方法将回调延迟到下次<code>DOM</code>更新循环之后执行，也就是在下次<code>DOM</code>更新循环结束之后执行延迟回调，在修改数据之后立即使用这个方法，能够获取更新后的<code>DOM</code>。</p>
+<p>简单来说就是当数据更新时，在<code>DOM</code>中渲染完成后，执行回调函数。<br>通过一个简单的例子来演示<code>$nextTick</code>方法的作用，首先需要知道<code>Vue</code>在更新<code>DOM</code>时是异步执行的，也就是说在更新数据时其不会阻塞代码的执行，直到执行栈中代码执行结束之后，才开始执行异步任务队列的代码，所以在数据更新时，组件不会立即渲染，此时在获取到<code>DOM</code>结构后取得的值依然是旧的值，而在<code>$nextTick</code>方法中设定的回调函数会在组件渲染完成之后执行，取得<code>DOM</code>结构后取得的值便是新的值。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> vm = <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">        el: <span class="string">&#x27;#app&#x27;</span>,</span></span><br><span class="line">        data: &#123;</span><br><span class="line"><span class="javascript">            msg: <span class="string">&#x27;Vue&#x27;</span></span></span><br><span class="line">        &#125;,</span><br><span class="line">        template:`</span><br><span class="line"><span class="handlebars"><span class="xml">            <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span></span><br><span class="line"><span class="handlebars"><span class="xml">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">ref</span>=<span class="string">&quot;msgElement&quot;</span>&gt;</span></span><span class="template-variable">&#123;&#123;<span class="name">msg</span>&#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span></span><br><span class="line"><span class="handlebars"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;updateMsg&quot;</span>&gt;</span>updateMsg<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span></span><br><span class="line"><span class="handlebars"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span></span><br><span class="line">        `,</span><br><span class="line">        methods:&#123;</span><br><span class="line"><span class="javascript">            updateMsg: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">this</span>.msg = <span class="string">&quot;Update&quot;</span>;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">console</span>.log(<span class="string">&quot;DOM未更新：&quot;</span>, <span class="built_in">this</span>.$refs.msgElement.innerHTML)  <span class="comment">// Vue</span></span></span><br><span class="line"><span class="javascript">                <span class="built_in">this</span>.$nextTick(<span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">console</span>.log(<span class="string">&quot;DOM已更新：&quot;</span>, <span class="built_in">this</span>.$refs.msgElement.innerHTML) <span class="comment">//Update</span></span></span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        </span><br><span class="line">    &#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里涉及到了事件循环（<code>Event Loop</code>）的知识点</p>
+<ul>
+<li>执行栈就是在主线程执行同步任务的数据结构，函数调用形成了一个由若干帧组成的栈。</li>
+<li>后台线程就是浏览器实现对于<code>setTimeout</code>、<code>setInterval</code>、<code>XMLHttpRequest</code>等等的执行线程。</li>
+<li>宏队列，一些异步任务的回调会依次进入宏队列，等待后续被调用，包括<code>setTimeout</code>、<code>setInterval</code>、<code>setImmediate(Node)</code>、<code>requestAnimationFrame</code>、<code>UI rendering</code>、<code>I/O</code>等操作。</li>
+<li>微队列，另一些<code>异步任务的回调(重点：是异步任务的回调，并不是异步任务会进入微队列)</code>会依次进入微队列，等待后续调用，包括<code>Promise</code>、<code>process.nextTick(Node)</code>、<code>Object.observe</code>、<code>MutationObserver</code>等操作。</li>
+</ul>
+<p>当<code>Js</code>执行时，进行如下流程:</p>
+<ol>
+<li>首先将执行栈中代码同步执行，将这些代码中异步任务加入后台线程中。</li>
+<li>执行栈中的同步代码执行完毕后，执行栈清空，并开始扫描微队列。</li>
+<li>取出微队列队首任务，放入执行栈中执行，此时微队列是进行了出队操作。</li>
+<li>当执行栈执行完成后，继续出队微队列任务并执行，直到微队列任务全部执行完毕。</li>
+<li>最后一个微队列任务出队并进入执行栈后微队列中任务为空，当执行栈任务完成后，开始扫面微队列为空，继续扫描宏队列任务，宏队列出队，放入执行栈中执行，执行完毕后继续扫描微队列为空则扫描宏队列，出队执行。</li>
+<li>不断往复<code>...</code>。</li>
+</ol>
+<p>了解异步任务的执行队列后，回到中<code>$nextTick</code>方法，当用户数据更新时，<code>Vue</code>将会维护一个缓冲队列，对于所有的更新数据将要进行的组件渲染与<code>DOM</code>操作进行一定的策略处理后加入缓冲队列，然后便会在<code>$nextTick</code>方法的执行队列中加入一个<code>flushSchedulerQueue</code>方法(这个方法将会触发在缓冲队列的所有回调的执行)，然后将<code>$nextTick</code>方法的回调加入<code>$nextTick</code>方法中维护的执行队列，在异步挂载的执行队列触发时就会首先会首先执行<code>flushSchedulerQueue</code>方法来处理<code>DOM</code>渲染的任务，然后再去执行<code>$nextTick</code>方法构建的任务，这样就可以实现在<code>$nextTick</code>方法中取得已渲染完成的<code>DOM</code>结构。</p>
+<p>知识点：<a href="E:\随手笔记\事件循环.md">事件循环</a></p>
+<h2 id="10、Vue的生命周期"><a href="#10、Vue的生命周期" class="headerlink" title="10、Vue的生命周期"></a>10、Vue的生命周期</h2><h3 id="什么时候被调用"><a href="#什么时候被调用" class="headerlink" title="什么时候被调用"></a><strong>什么时候被调用</strong></h3><ul>
+<li>beforeCreate ：实例初始化之后，数据观测之前调用</li>
+<li>created：实例创建完之后调用。实例完成：数据观测、属性和方法的运算、<code> watch/event</code> 事件回调。无<code> $el</code> .</li>
+<li>beforeMount：挂在开始之前被调用，相关的render函数首次被调用（虚拟DOM），实例已完成以下的配置： 编译模板，把data里面的数据和模板生成html，完成了el和data 初始化，注意此时还没有挂在html到页面上</li>
+<li>mounted：挂在完成，也就是模板中的HTML渲染到HTML页面中，此时一般可以做一些ajax操作，mounted只会执行一次。。</li>
+<li>beforeUpdate：数据更新前调用，发生在虚拟DOM重新渲染和打补丁，在这之后会调用改钩子。</li>
+<li>updated：由于数据更改导致的虚拟DOM重新渲染和打补丁，在这之后会调用改钩子。</li>
+<li>beforeDestroy：实例销毁前调用，实例仍然可用。</li>
+<li>destroyed：实例销毁之后调用，调用后，Vue实例指示的所有东西都会解绑，所有事件监听器和所有子实例都会被移除</li>
+</ul>
+<h3 id="每个生命周期内部可以做什么？"><a href="#每个生命周期内部可以做什么？" class="headerlink" title="每个生命周期内部可以做什么？"></a><strong>每个生命周期内部可以做什么？</strong></h3><ul>
+<li>created：实例已经创建完成，因为他是最早触发的，所以可以进行一些数据、资源的请求。</li>
+<li>mounted：实例已经挂载完成，可以进行一些DOM操作。</li>
+<li>beforeUpdate：可以在这个钩子中进一步的更改状态，不会触发重渲染。</li>
+<li>updated：可以执行依赖于DOM的操作，但是要避免更改状态，可能会导致更新无线循环。</li>
+<li>destroyed：可以执行一些优化操作，清空计时器，解除绑定事件。</li>
+</ul>
+<h3 id="ajax放在哪个生命周期？"><a href="#ajax放在哪个生命周期？" class="headerlink" title="ajax放在哪个生命周期？"></a><strong>ajax放在哪个生命周期？</strong></h3><p>一般放在<code> mounted</code> 中，保证逻辑统一性，因为生命周期是同步执行的，<code> ajax</code> 是异步执行的。单数服务端渲染<code> ssr</code> 同一放在<code> created</code> 中，因为服务端渲染不支持<code> mounted</code> 方法。</p>
+<h3 id="什么时候使用beforeDestroy？"><a href="#什么时候使用beforeDestroy？" class="headerlink" title="什么时候使用beforeDestroy？"></a><strong>什么时候使用beforeDestroy？</strong></h3><p>当前页面使用<code> $on</code> ，需要解绑事件。清楚定时器。解除事件绑定，<code> scroll mousemove</code> 。</p>
+<h2 id="11、父子组件生命周期调用顺序"><a href="#11、父子组件生命周期调用顺序" class="headerlink" title="11、父子组件生命周期调用顺序"></a>11、父子组件生命周期调用顺序</h2><p>渲染顺序：先父后子，完成顺序：先子后父</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">父beforeCreate-&gt;父created-&gt;父beforeMount-&gt;子beforeCreate-&gt;子created-&gt;子beforeMount-&gt;子mounted-&gt;父mounted</span><br></pre></td></tr></table></figure>
+
+<p>更新顺序：父更新导致子更新，子更新完成后父</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">父beforeUpdate-&gt;子beforeUpdate-&gt;子updated-&gt;父updated</span><br></pre></td></tr></table></figure>
+
+<p>销毁顺序：先父后子，完成顺序：先子后父</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　父beforeDestroy-&gt;子beforeDestroy-&gt;子destroyed-&gt;父destroyed</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="12、Vue组件通信"><a href="#12、Vue组件通信" class="headerlink" title="12、Vue组件通信"></a>12、Vue组件通信</h2><h3 id="1-prop-emit"><a href="#1-prop-emit" class="headerlink" title="1.prop/$emit"></a>1.prop/$emit</h3><p>父组件：通过<code>prop</code>的方式向子组件传递数据</p>
+<p>子组件：通过<code>$emit</code>可以向父组件通信。</p>
+<p>优点：</p>
+<p>​    传值取值方便简洁明了</p>
+<p>缺点：</p>
+<ol>
+<li>由于数据是单向传递，如果子组件需要改变父组件的props值每次需要给子组件绑定对应的监听事件。</li>
+<li>如果父组件需要给孙组件传值，需要子组件进行转发，较为不便。</li>
+</ol>
+<h3 id="2-parent-children"><a href="#2-parent-children" class="headerlink" title="2.$parent/$children"></a>2.$parent/$children</h3><p>在子组件中通过<code>$parent</code>调用了父组件的函数，并在父组件通过<code>$children</code>获取子组件实例的数组</p>
+<h3 id="3-provide-inject"><a href="#3-provide-inject" class="headerlink" title="3.provide/inject"></a>3.provide/inject</h3><p>父组件中通过provide来提供变量, 然后再子组件中通过inject来注入变量。这里inject注入的变量不像<code>$attrs</code>，只能向下一层；inject不论子组件嵌套有多深，都能获取到。</p>
+<h3 id="4-attrs-listeners"><a href="#4-attrs-listeners" class="headerlink" title="4.$attrs/$listeners"></a>4.$attrs/$listeners</h3><p>跨一级传输数据</p>
+<h3 id="5-vuex"><a href="#5-vuex" class="headerlink" title="5.vuex"></a>5.vuex</h3><p>vuex实现了单向的数据流，在全局定义了一个State对象用来存储数据，当组件要修改State中的数据时，必须通过Mutation进行操作。</p>
+<h3 id="6-refs"><a href="#6-refs" class="headerlink" title="6.$refs"></a>6.$refs</h3><p>用在子组件上，获取的就是组件的实例对象。获取组件实例，调用组件的属性、方法</p>
+<h3 id="7-Event-Bus"><a href="#7-Event-Bus" class="headerlink" title="7.Event Bus"></a>7.Event Bus</h3><p>跨组件通信<code> Event Bus</code> （Vue.prototype.bus = new Vue）其实基于<em>b<strong>u</strong>s</em>=<em>n<strong>e</strong>w<strong>V</strong>u**e</em>）其实基于on与$emit</p>
+<h3 id="常见使用场景分为以下三类"><a href="#常见使用场景分为以下三类" class="headerlink" title="常见使用场景分为以下三类:"></a>常见使用场景分为以下三类:</h3><ul>
+<li>父子组件通信: props; $parent/$children; provide/inject; $ref; $attrs/$listeners</li>
+<li>兄弟组件通信: EventBus; Vuex</li>
+<li>跨级通信: EventBus; Vuex; provide/inject; $attrs/$listeners</li>
+</ul>
+<p>详细：<a href="E:\随手笔记\Vue\vue组件通信.md">vue组件通信</a></p>
+<h2 id="13-Vuex-工作原理"><a href="#13-Vuex-工作原理" class="headerlink" title="13.Vuex 工作原理"></a>13.Vuex 工作原理</h2><p>Vuex 是一个专为 Vue.js 应用程序开发的<strong>状态管理模式</strong>。</p>
+<p>状态自管理应用包含以下几个部分：</p>
+<ul>
+<li><p>state，驱动应用的数据源；</p>
+</li>
+<li><p>view，以声明方式将 state 映射到视图；</p>
+</li>
+<li><p>actions，响应在 view 上的用户输入导致的状态变化。下图单向数据流示意图：</p>
+<img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/flow.png" alt="flow" style="zoom:30%;">
+
+<p>vuex，多组件共享状态，因-单向数据流简洁性很容易被破坏：</p>
+<ul>
+<li>多个视图依赖于同一状态。</li>
+<li>来自不同视图的行为需要变更同一状态。</li>
+</ul>
+<p><img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/vuex.png" alt="vuex"></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+      </tags>
+  </entry>
 </search>
