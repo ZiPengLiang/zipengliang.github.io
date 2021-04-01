@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>BFC</title>
-    <url>/article/c5a97815.html</url>
+    <url>/2021/03/08/BFC/</url>
     <content><![CDATA[<h2 id="一、BFC-概念"><a href="#一、BFC-概念" class="headerlink" title="一、BFC 概念"></a>一、BFC 概念</h2><p>Formatting context(格式化上下文) 是 W3C CSS2.1 规范中的一个概念。它是页面中的一块渲染区域，并且有一套渲染规则，它决定了其子元素将如何定位，以及和其他元素的关系和相互作用。</p>
 <p>那么 BFC 是什么呢？</p>
 <p>BFC 即 Block Formatting Contexts (块级格式化上下文)，它属于上述定位方案的普通流。</p>
@@ -18,28 +18,28 @@
 </ul>
 <h2 id="三、BFC-特性及应用"><a href="#三、BFC-特性及应用" class="headerlink" title="三、BFC 特性及应用"></a>三、BFC 特性及应用</h2><h3 id="1-同一个-BFC-下外边距会发生折叠"><a href="#1-同一个-BFC-下外边距会发生折叠" class="headerlink" title="1. 同一个 BFC 下外边距会发生折叠"></a><strong>1. 同一个 BFC 下外边距会发生折叠</strong></h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">div&#123;</span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background: lightblue;</span><br><span class="line">    margin: 100px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/article/bfc_1.png"></p>
+<p><img src="/2021/03/08/BFC/bfc_1.png"></p>
 <p>因为两个 div 元素都处于同一个 BFC 容器下 (这里指 body 元素) 所以第一个 div 的下边距和第二个 div 的上边距发生了重叠，所以两个盒子之间距离只有 100px，而不是 200px。</p>
 <p>注意：这不是css 的bug，而是一种规范，<strong>如果想要避免外边距的重叠，可以将其放在不同的 BFC 容器中。</strong></p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">.container &#123;</span><br><span class="line">    overflow: hidden;</span><br><span class="line">&#125;</span><br><span class="line">p &#123;</span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background: lightblue;</span><br><span class="line">    margin: 100px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这时候，两个盒子边距就变成了 200px</p>
-<p><img src="/article/bfc_3.png"></p>
+<p><img src="/2021/03/08/BFC/bfc_3.png"></p>
 <h3 id="2-BFC-可以包含浮动的元素（清除浮动）"><a href="#2-BFC-可以包含浮动的元素（清除浮动）" class="headerlink" title="2. BFC 可以包含浮动的元素（清除浮动）"></a><strong>2. BFC 可以包含浮动的元素（清除浮动）</strong></h3><p>浮动的元素会脱离普通文档流，导致无法撑开父元素</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line"> <span class="selector-class">.f_box</span> &#123;</span><br><span class="line">   <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#000</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.child_box</span> &#123;</span><br><span class="line">   <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">   <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">   <span class="attribute">background</span>: <span class="number">#eee</span>;</span><br><span class="line">   <span class="attribute">float</span>: left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;f_box&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;child_box&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>由于容器内元素浮动，脱离了文档流，所以容器只剩下 2px 的边距高度。</p>
-<p><img src="/article/image-20210308161026260.png"></p>
+<p><img src="/2021/03/08/BFC/image-20210308161026260.png"></p>
 <p>如果使触发容器的 BFC，那么容器将会包裹着浮动元素。</p>
-<p><img src="/article/image-20210308161210023.png"></p>
+<p><img src="/2021/03/08/BFC/image-20210308161210023.png"></p>
 <h3 id="3-BFC-可以阻止元素被浮动元素覆盖"><a href="#3-BFC-可以阻止元素被浮动元素覆盖" class="headerlink" title="3. BFC 可以阻止元素被浮动元素覆盖"></a><strong>3. BFC 可以阻止元素被浮动元素覆盖</strong></h3><p>文字环绕效果</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;height: 100px;width: 100px;float: left;background: lightblue&quot;</span>&gt;</span>我是一个左浮动的元素<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;width: 200px; height: 200px;background: #eee&quot;</span>&gt;</span>我是一个没有设置浮动, </span><br><span class="line">也没有触发 BFC 元素, width: 200px; height:200px; background: #eee;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/article/image-20210308161324157.png"></p>
+<p><img src="/2021/03/08/BFC/image-20210308161324157.png"></p>
 <p>这时候其实第二个元素有部分被浮动元素所覆盖，(但是文本信息不会被浮动元素所覆盖) 如果想避免元素被覆盖，可触第二个元素的 BFC 特性，在第二个元素中加入 <strong>overflow: hidden</strong>，就会变成：</p>
-<p><img src="/article/image-20210308161521492.png"></p>
+<p><img src="/2021/03/08/BFC/image-20210308161521492.png"></p>
 <p>原文来源:<a href="https://zhuanlan.zhihu.com/p/25321647">BFC</a></p>
 ]]></content>
       <categories>
@@ -51,7 +51,7 @@
   </entry>
   <entry>
     <title>Javascript同步与异步问题</title>
-    <url>/article/bcf7e3df.html</url>
+    <url>/2021/02/24/Javascript%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<blockquote>
 <p>在javascript中大部分程序都是顺序执行的，即只有一个函数执行完后才会，但有时候某些程序运行时间过长，导致之后的程序也不能执行，这就是所谓的阻塞。为了解决这种情况，异步编程就出现了</p>
 </blockquote>
@@ -96,7 +96,7 @@
   </entry>
   <entry>
     <title>async/await的基本用法</title>
-    <url>/article/850a53f3.html</url>
+    <url>/2021/02/24/async-await%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[<p>首先，我们使用<code>async</code>关键字，您可以将它放在函数声明之前，将其转换为async function；</p>
 <p><strong>async function</strong>用来定义一个返回AsyncFunction 对象的异步函数。异步函数是指通过事件循环异步执行的函数，它会通过一个隐式的Promise 返回其结果。如果你在代码中使用了异步函数，就会发现它的语法和结构会更像是标准的同步函数。</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">resolveAfter2Seconds</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      resolve(<span class="string">&#x27;resolved&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">asyncCall</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;calling&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> result = <span class="keyword">await</span> resolveAfter2Seconds();</span><br><span class="line">  <span class="built_in">console</span>.log(result);</span><br><span class="line">  <span class="comment">// expected output: &#x27;resolved&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncCall();</span><br><span class="line"><span class="comment">//calling</span></span><br><span class="line"><span class="comment">//resolved</span></span><br></pre></td></tr></table></figure>
@@ -145,7 +145,7 @@
   </entry>
   <entry>
     <title>git-BUG分支</title>
-    <url>/article/a05f3d28.html</url>
+    <url>/2021/03/02/git-BUG%E5%88%86%E6%94%AF/</url>
     <content><![CDATA[<h1 id="BUG分支"><a href="#BUG分支" class="headerlink" title="BUG分支"></a>BUG分支</h1><p>软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，由于分支是如此的强大，所以，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。</p>
 <p>当开发过程中接到一个紧急bug，但是当前开发的分支内容并未写好，不能上传，幸好，Git还提供了一个<code>stash</code>功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git stash</span><br><span class="line">Saved working directory and index state WIP on dev: f52c633 add merge</span><br></pre></td></tr></table></figure>
@@ -176,68 +176,8 @@
       </tags>
   </entry>
   <entry>
-    <title>git-工作区和暂存区</title>
-    <url>/article/d0f75f48.html</url>
-    <content><![CDATA[<h4 id="工作区（Working-Directory）"><a href="#工作区（Working-Directory）" class="headerlink" title="工作区（Working Directory）"></a>工作区（Working Directory）</h4><p>工作区就是能看到的目录</p>
-<p><img src="/article/image-20200421161510758.png"></p>
-<p>就是这个python文件夹</p>
-<span id="more"></span>
-
-<h4 id="版本库（Repository）"><a href="#版本库（Repository）" class="headerlink" title="版本库（Repository）"></a>版本库（Repository）</h4><p>工作区有一个隐藏目录<code>.git</code>，这个是Git的版本库</p>
-<p>Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支<code>master</code>，以及指向<code>master</code>的一个指针叫<code>HEAD</code>。</p>
-<p><img src="/article/0.jpg"></p>
-<p>当我们把文件往Git版本库里添加的时候，是分两步执行的：</p>
-<p>第一步：用<code>git add </code>把文件添加进去，实际上就是把文件修改添加到暂存区</p>
-<p>第二步：用<code>git commit</code>提交更改，实际上就是把暂存区的所有内容提交到当前分支中</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>git-分支操作</title>
-    <url>/article/f165ff28.html</url>
-    <content><![CDATA[<h3 id="创建与合并分支"><a href="#创建与合并分支" class="headerlink" title="创建与合并分支"></a>创建与合并分支</h3><p>一开始的时候，<code>master</code>分支是一条线，Git用<code>master</code>指向最新的提交，再用<code>HEAD</code>指向<code>master</code>，就能确定当前分支，以及当前分支的提交点：</p>
-<p><img src="/article/1.png"></p>
-<p>每次提交，<code>master</code>分支都会向前移动一步，这样，随着你不断提交，<code>master</code>分支的线也越来越长。</p>
-<span id="more"></span>
-
-<p>当我们创建新的分支，例如<code>dev</code>时，Git新建了一个指针叫<code>dev</code>，指向<code>master</code>相同的提交，再把<code>HEAD</code>指向<code>dev</code>，就表示当前分支在<code>dev</code>上：</p>
-<p><img src="/article/2.png"></p>
-<p>Git创建一个分支很快，因为除了增加一个<code>dev</code>指针，改改<code>HEAD</code>的指向，工作区的文件都没有任何变化！</p>
-<p>不过，从现在开始，对工作区的修改和提交就是针对<code>dev</code>分支了，比如新提交一次后，<code>dev</code>指针往前移动一步，而<code>master</code>指针不变：</p>
-<p><img src="/article/3.png"></p>
-<p>假如我们在<code>dev</code>上的工作完成了，就可以把<code>dev</code>合并到<code>master</code>上。Git怎么合并呢？最简单的方法，就是直接把<code>master</code>指向<code>dev</code>的当前提交，就完成了合并：</p>
-<p><img src="/article/4.png"></p>
-<p>所以Git合并分支也很快！就改改指针，工作区内容也不变！</p>
-<p>合并完分支后，甚至可以删除<code>dev</code>分支。删除<code>dev</code>分支就是把<code>dev</code>指针给删掉，删掉后，我们就剩下了一条<code>master</code>分支：</p>
-<p><img src="/article/5.png"></p>
-<p>实现代码：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">git checkout -b dev</span><br><span class="line"><span class="comment">//代码中的-b是指常见一个分支，相当于下属2行代码</span></span><br><span class="line">git branch dev</span><br><span class="line">git checkout dev</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//关键--合并分支</span></span><br><span class="line">git merge dev</span><br><span class="line"></span><br><span class="line"><span class="comment">//删除分支</span></span><br><span class="line">git branch -d dev</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Git鼓励大量使用分支：</p>
-<p>查看分支：<code>git branch</code></p>
-<p>创建分支：<code>git branch </code></p>
-<p>切换分支：<code>git checkout </code>或者<code>git switch </code></p>
-<p>创建+切换分支：<code>git checkout -b </code>或者<code>git switch -c </code></p>
-<p>合并某分支到当前分支：<code>git merge </code></p>
-<p>删除分支：<code>git branch -d </code></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git-查看文件状态</title>
-    <url>/article/3dfaaaba.html</url>
+    <url>/2021/03/02/git-%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81/</url>
     <content><![CDATA[<p>运行<code>git status</code>命令看看结果</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git status</span><br><span class="line">On branch master</span><br><span class="line">Changes not staged for commit:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)</span><br><span class="line">  (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)</span><br><span class="line"></span><br><span class="line">	modified:   readme.txt</span><br><span class="line"></span><br><span class="line">no changes added to commit (use &quot;git add&quot; and&#x2F;or &quot;git commit -a&quot;)</span><br></pre></td></tr></table></figure>
 
@@ -264,9 +204,9 @@
   </entry>
   <entry>
     <title>git-库操作</title>
-    <url>/article/9b51bb39.html</url>
+    <url>/2021/03/02/git-%E5%BA%93%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<h3 id="创建版本库"><a href="#创建版本库" class="headerlink" title="创建版本库"></a>创建版本库</h3><p>通过<strong>git init</strong>命令把目录变成Git可以管理的创库</p>
-<p><img src="/article/image-20200421141058285.png" alt="库初始化"></p>
+<p><img src="/2021/03/02/git-%E5%BA%93%E6%93%8D%E4%BD%9C/image-20200421141058285.png" alt="库初始化"></p>
 <p><strong>.git</strong> 目录，这目录是默认隐藏的，可以通过显示隐藏文件来查看**.git**</p>
 <span id="more"></span>
 
@@ -278,7 +218,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git commit -m&#39;注释内容&#39;</span><br></pre></td></tr></table></figure>
 
 <p><code>git commit</code>命令，<code>-m</code>后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样就能从历史记录里方便地找到改动记录</p>
-<p><img src="/article/image-20200421150400589.png" alt="提交到库"></p>
+<p><img src="/2021/03/02/git-%E5%BA%93%E6%93%8D%E4%BD%9C/image-20200421150400589.png" alt="提交到库"></p>
 <p>小结：</p>
 <p>初始化一个Git仓库，使用<code>git init</code>命令。</p>
 <p>添加文件到Git仓库，分两步：</p>
@@ -295,17 +235,77 @@
       </tags>
   </entry>
   <entry>
+    <title>git-工作区和暂存区</title>
+    <url>/2021/03/02/git-%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C%E6%9A%82%E5%AD%98%E5%8C%BA/</url>
+    <content><![CDATA[<h4 id="工作区（Working-Directory）"><a href="#工作区（Working-Directory）" class="headerlink" title="工作区（Working Directory）"></a>工作区（Working Directory）</h4><p>工作区就是能看到的目录</p>
+<p><img src="/2021/03/02/git-%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C%E6%9A%82%E5%AD%98%E5%8C%BA/image-20200421161510758.png"></p>
+<p>就是这个python文件夹</p>
+<span id="more"></span>
+
+<h4 id="版本库（Repository）"><a href="#版本库（Repository）" class="headerlink" title="版本库（Repository）"></a>版本库（Repository）</h4><p>工作区有一个隐藏目录<code>.git</code>，这个是Git的版本库</p>
+<p>Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支<code>master</code>，以及指向<code>master</code>的一个指针叫<code>HEAD</code>。</p>
+<p><img src="/2021/03/02/git-%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C%E6%9A%82%E5%AD%98%E5%8C%BA/0.jpg"></p>
+<p>当我们把文件往Git版本库里添加的时候，是分两步执行的：</p>
+<p>第一步：用<code>git add </code>把文件添加进去，实际上就是把文件修改添加到暂存区</p>
+<p>第二步：用<code>git commit</code>提交更改，实际上就是把暂存区的所有内容提交到当前分支中</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git-分支操作</title>
+    <url>/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h3 id="创建与合并分支"><a href="#创建与合并分支" class="headerlink" title="创建与合并分支"></a>创建与合并分支</h3><p>一开始的时候，<code>master</code>分支是一条线，Git用<code>master</code>指向最新的提交，再用<code>HEAD</code>指向<code>master</code>，就能确定当前分支，以及当前分支的提交点：</p>
+<p><img src="/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/1.png"></p>
+<p>每次提交，<code>master</code>分支都会向前移动一步，这样，随着你不断提交，<code>master</code>分支的线也越来越长。</p>
+<span id="more"></span>
+
+<p>当我们创建新的分支，例如<code>dev</code>时，Git新建了一个指针叫<code>dev</code>，指向<code>master</code>相同的提交，再把<code>HEAD</code>指向<code>dev</code>，就表示当前分支在<code>dev</code>上：</p>
+<p><img src="/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/2.png"></p>
+<p>Git创建一个分支很快，因为除了增加一个<code>dev</code>指针，改改<code>HEAD</code>的指向，工作区的文件都没有任何变化！</p>
+<p>不过，从现在开始，对工作区的修改和提交就是针对<code>dev</code>分支了，比如新提交一次后，<code>dev</code>指针往前移动一步，而<code>master</code>指针不变：</p>
+<p><img src="/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/3.png"></p>
+<p>假如我们在<code>dev</code>上的工作完成了，就可以把<code>dev</code>合并到<code>master</code>上。Git怎么合并呢？最简单的方法，就是直接把<code>master</code>指向<code>dev</code>的当前提交，就完成了合并：</p>
+<p><img src="/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/4.png"></p>
+<p>所以Git合并分支也很快！就改改指针，工作区内容也不变！</p>
+<p>合并完分支后，甚至可以删除<code>dev</code>分支。删除<code>dev</code>分支就是把<code>dev</code>指针给删掉，删掉后，我们就剩下了一条<code>master</code>分支：</p>
+<p><img src="/2021/03/02/git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C/5.png"></p>
+<p>实现代码：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">git checkout -b dev</span><br><span class="line"><span class="comment">//代码中的-b是指常见一个分支，相当于下属2行代码</span></span><br><span class="line">git branch dev</span><br><span class="line">git checkout dev</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//关键--合并分支</span></span><br><span class="line">git merge dev</span><br><span class="line"></span><br><span class="line"><span class="comment">//删除分支</span></span><br><span class="line">git branch -d dev</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Git鼓励大量使用分支：</p>
+<p>查看分支：<code>git branch</code></p>
+<p>创建分支：<code>git branch </code></p>
+<p>切换分支：<code>git checkout </code>或者<code>git switch </code></p>
+<p>创建+切换分支：<code>git checkout -b </code>或者<code>git switch -c </code></p>
+<p>合并某分支到当前分支：<code>git merge </code></p>
+<p>删除分支：<code>git branch -d </code></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git-版本回退</title>
-    <url>/article/a26dc950.html</url>
+    <url>/2021/03/02/git-%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/</url>
     <content><![CDATA[<p>当多次提交提交的时候，当发现提交错误时，需要版本回退</p>
 <p>当然了，在实际工作中，我们脑子里怎么可能记得一个几千行的文件每次都改了什么内容，不然要版本控制系统干什么。版本控制系统肯定有某个命令可以告诉我们历史记录，在Git中，我们用<code>git log</code>命令查看：</p>
-<p><img src="/article/image-20200421152956511.png" alt="image-20200421152956511"></p>
+<p><img src="/2021/03/02/git-%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/image-20200421152956511.png" alt="image-20200421152956511"></p>
 <span id="more"></span>
 
 <p><code>git log</code>命令显示从最近到最远的提交日志，我们可以看到3次提交</p>
 <p>最近的一次是<code>append GPL</code>，上一次是<code>add distributed</code>，最早的一次是<code>wrote a readme file</code></p>
 <p>若是嫌弃输出信息太多后，可以加上<code>--pretty=oneline</code>参数：</p>
-<p><img src="/article/image-20200421153416597.png" alt="image-20200421153416597"></p>
+<p><img src="/2021/03/02/git-%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/image-20200421153416597.png" alt="image-20200421153416597"></p>
 <p>上述的一串类似<code>68ff863d</code>的是commit 的版本号，通过版本号可以得知是哪一个版本</p>
 <p>当知道版本后，可以通过reset来实现版本回退</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git reset --hard HEAD^</span><br><span class="line">HEAD is now at e475afc add distributed</span><br></pre></td></tr></table></figure>
@@ -337,15 +337,15 @@
   </entry>
   <entry>
     <title>git-解决冲突</title>
-    <url>/article/96a865d7.html</url>
+    <url>/2021/03/02/git-%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81/</url>
     <content><![CDATA[<p>当我们在不同分支修改同一个文件的相同部位内容的时候，当分支进行合并的时候，就会产生冲突，就像这样</p>
-<p><img src="/article/6.png"></p>
+<p><img src="/2021/03/02/git-%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81/6.png"></p>
 <p>这种情况下，Git无法执行“快速合并”，只能试图把各自的修改合并起来，但这种合并就可能会有冲突。</p>
 <span id="more"></span>
 
 <p><code>git status</code>可以告诉我们冲突的文件</p>
 <p>当将冲突的内容修正后，再提交代码</p>
-<p><img src="/article/7.png"></p>
+<p><img src="/2021/03/02/git-%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81/7.png"></p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
 <p>解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容，再提交。</p>
 <p>用<code>git log --graph</code>命令可以看到分支合并图。</p>
@@ -358,26 +358,94 @@
       </tags>
   </entry>
   <entry>
+    <title>vue-cl3搭建项目</title>
+    <url>/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<h2 id="前置环境"><a href="#前置环境" class="headerlink" title="前置环境"></a>前置环境</h2><ol>
+<li><p>npm更新到最新</p>
+</li>
+<li><p>node &gt;=8.9 版本</p>
+</li>
+<li><p>全局安装了vue-cli</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">npm</span> install -g @vue/cli</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装了vue</p>
+</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="创建项目步骤"><a href="#创建项目步骤" class="headerlink" title="创建项目步骤"></a>创建项目步骤</h2><p>1.在新建的文件夹下创建项目 vue create my-project</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527162513494.png"></p>
+<p>指向的是ssr是因为上次配置过的cli3的配置，第一次执行create是没有的</p>
+<p>通过键盘上下键可以切换选项，也可以选默认(default)，也可以选择手动(Manally),如果选择default，那个一直回车就好了</p>
+<p>当然了需求不同，往往需要手动配置</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527163003709.png"></p>
+<p>2.手动配置的配置信息</p>
+<p>按照个人项目需求，选择需要的配置</p>
+<p>注意，空格是选中和取消，A键是全选</p>
+<p>TypeScript 支持使用 TypeScript 书写源码</p>
+<p> Progressive Web App (PWA) Support PWA 支持。</p>
+<p> Router 支持 vue-router 。</p>
+<p>Vuex 支持 vuex 。</p>
+<p>CSS Pre-processors 支持 CSS 预处理器。</p>
+<p> Linter / Formatter 支持代码风格检查和格式化。</p>
+<p> Unit Testing 支持单元测试。</p>
+<p> E2E Testing 支持 E2E 测试。</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527163437407.png"></p>
+<p>以上是我搭建Vue项目的配置信息</p>
+<p>3.当选了Router后会询问是否采用history，当然基本都是用的</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527163625559.png"></p>
+<p>4.css的预处理</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527163730822.png"></p>
+<p>我选了Sass</p>
+<p>5.我选择的是ESLint + Prettier</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527163943737.png"></p>
+<p>6.选择语法检查方式</p>
+<p>我自己选择保存就检测<br>第一个是保存检测，第二个是fix和commit的时候检测</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164041148.png"></p>
+<p>7.单元测试，我选择了Mocha</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164238990.png"></p>
+<p>8.配置文件存放地方<br>第一个是独立文件夹位置，第二个是在package.json文件里</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164307971.png"></p>
+<p>9.询问是否记录这一次的配置，以便下次使用，如一开始的时候会显示的vuecli3配置</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164327651.png"></p>
+<p>10.回车确定等待下载</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164349916.png"></p>
+<p>11.下载后就可以启动和编写</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">cd my-project</span><br><span class="line">npm run serve</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164556028.png"></p>
+<p>12.vue-cli3.0的目录结构相比2.0而言要简介许多，没有了build和config等文件，当需要其他配置的时候需要自己去配置，比如说webpack配置</p>
+<p><img src="/2021/02/25/vue-cl3%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE/image-20200527164806424.png"></p>
+<p>原文来自：<a href="https://www.jianshu.com/p/5e13bc2eb97c">vue-cli3快速创建项目</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>vue-config-js配置参考</title>
-    <url>/article/c0e48dbf.html</url>
+    <url>/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/</url>
     <content><![CDATA[<blockquote>
 <p><strong>vue-cli3 脚手架搭建完成后，项目目录中没有 vue.config.js 文件，需要手动创建</strong></p>
 </blockquote>
-<p><img src="/article/image-20200527164806424.png"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527164806424.png"></p>
 <h2 id="创建vue-config-js"><a href="#创建vue-config-js" class="headerlink" title="创建vue.config.js"></a>创建vue.config.js</h2><p>vue.config.js 是一个可选的配置文件，如果项目的 (和 package.json 同级的) 根目录中存在这个文件，那么它会被 @vue/cli-service 自动加载。你也可以使用 package.json 中的 vue 字段，但是注意这种写法需要你严格遵照 JSON 的格式来写。</p>
 <span id="more"></span>
 
 <p>在根目录中创建 <strong>vue.config.js</strong></p>
-<p><img src="/article/image-20200527165215304.png" alt="vue.config.js位置"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527165215304.png" alt="vue.config.js位置"></p>
 <h2 id="vue-config-js配置"><a href="#vue-config-js配置" class="headerlink" title="vue.config.js配置"></a><strong>vue.config.js配置</strong></h2><p>这个文件应该导出一个包含了选项的对象：</p>
-<p><img src="/article/image-20200527170610550.png" alt="导出配置"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527170610550.png" alt="导出配置"></p>
 <h3 id="配置选项"><a href="#配置选项" class="headerlink" title="配置选项"></a><strong>配置选项</strong></h3><h4 id="publicPath"><a href="#publicPath" class="headerlink" title="publicPath"></a><strong>publicPath</strong></h4><blockquote>
 <p>Type: string</p>
 <p>Default: ‘/‘</p>
 <p>部署应用包时的基本 URL， 用法和 webpack 本身的 output.publicPath 一致。</p>
 <p>这个值也可以被设置为空字符串 (‘’) 或是相对路径 (‘./‘)，这样所有的资源都会被链接为相对路径，这样打出来的包可以被部署在任意路径。</p>
 </blockquote>
-<p><img src="/article/image-20200527170802288.png" alt="基本路径"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527170802288.png" alt="基本路径"></p>
 <p>把开发服务器架设在根路径，可以使用一个条件式的值：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="comment">//选项</span></span><br><span class="line">    <span class="comment">//基本路径</span></span><br><span class="line">    publicPath: process.env.NODE_ENV === <span class="string">&#x27;production&#x27;</span> ? <span class="string">&#x27;/production-sub-path&#x27;</span> : <span class="string">&#x27;/&#x27;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -388,44 +456,44 @@
 <p>Default: ‘dist’</p>
 <p>输出文件目录，当运行 vue-cli-service build 时生成的生产环境构建文件的目录。注意目标目录在构建之前会被清除 (构建时传入 –no-clean 可关闭该行为)。</p>
 </blockquote>
-<p><img src="/article/image-20200527171222480.png" alt="输出目录"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527171222480.png" alt="输出目录"></p>
 <h4 id="assetsDir"><a href="#assetsDir" class="headerlink" title="assetsDir"></a><strong>assetsDir</strong></h4><blockquote>
 <p>Type: string</p>
 <p>Default: ‘’</p>
 <p>放置生成的静态资源 (js、css、img、fonts) 的目录。</p>
 </blockquote>
-<p><img src="/article/image-20200527172555291.png" alt="静态资源"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527172555291.png" alt="静态资源"></p>
 <p><strong>注：</strong>从生成的资源覆写 filename 或 chunkFilename 时，assetsDir 会被忽略。</p>
 <h4 id="indexPath"><a href="#indexPath" class="headerlink" title="indexPath"></a><strong>indexPath</strong></h4><blockquote>
 <p>Type: string</p>
 <p>Default: ‘index.html’</p>
 <p>指定生成的 index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径。</p>
 </blockquote>
-<p><img src="/article/image-20200527172607195.png" alt="输出路径"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527172607195.png" alt="输出路径"></p>
 <h4 id="filenameHashing"><a href="#filenameHashing" class="headerlink" title="filenameHashing"></a><strong>filenameHashing</strong></h4><p>Type: boolean</p>
 <p>Default: true</p>
 <p>默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。然而，这也要求 index 的 HTML 是被 Vue CLI 自动生成的。如果你无法使用 Vue CLI 生成的 index HTML，你可以通过将这个选项设为 false 来关闭文件名哈希。</p>
-<p><img src="/article/image-20200527172715959.png" alt="文件名哈希"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527172715959.png" alt="文件名哈希"></p>
 <h4 id="pages"><a href="#pages" class="headerlink" title="pages"></a><strong>pages</strong></h4><blockquote>
 <p>Type: Object</p>
 <p>Default: undefined</p>
 <p>在 multi-page（多页）模式下构建应用。每个“page”应该有一个对应的 JavaScript 入口文件。</p>
 </blockquote>
 <p>其值应该是一个对象，对象的 key 是入口的名字，value 是：一个指定了 entry, template, filename, title 和 chunks 的对象 (除了 entry 之外都是可选的)，或一个指定其 entry 的字符串。</p>
-<p><img src="/article/image-20200527172646321.png" alt="输出文件"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527172646321.png" alt="输出文件"></p>
 <p><strong>注：</strong>当在 多页应用 模式下构建时，webpack 配置会包含不一样的插件 (这时会存在多个 html-webpack-plugin 和 preload-webpack-plugin 的实例)。如果你试图修改这些插件的选项，请确认运行 vue inspect。</p>
 <h4 id="lintOnSave"><a href="#lintOnSave" class="headerlink" title="lintOnSave"></a><strong>lintOnSave</strong></h4><blockquote>
 <p>Type: boolean | ‘error’</p>
 <p>Default: true</p>
 <p>是否在保存的时候使用 <code>eslint-loader</code> 进行检查。 有效的值：<code>ture</code> | <code>false</code> | <code>&quot;error&quot;</code> 当设置为 <code>&quot;error&quot;</code> 时，检查出的错误会触发编译失败。</p>
 </blockquote>
-<p><img src="/article/image-20200527173136735.png" alt="eslint检测"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527173136735.png" alt="eslint检测"></p>
 <h4 id="runtimeCompiler"><a href="#runtimeCompiler" class="headerlink" title="runtimeCompiler"></a><strong>runtimeCompiler</strong></h4><blockquote>
 <p>Type: boolean</p>
 <p>Default: false</p>
 <p>是否使用包含运行时编译器的 Vue 构建版本。设置为 true 后你就可以在 Vue 组件中使用 template 选项了，但是这会让你的应用额外增加 10kb 左右。</p>
 </blockquote>
-<p><img src="/article/image-20200527173147705.png" alt="构建模板"></p>
+<p><img src="/2021/03/01/vue-config-js%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/image-20200527173147705.png" alt="构建模板"></p>
 <h4 id="transpileDependencies"><a href="#transpileDependencies" class="headerlink" title="transpileDependencies"></a><strong>transpileDependencies</strong></h4><blockquote>
 <p>Type: Array&lt;string | RegExp&gt;</p>
 <p>Default: []</p>
@@ -526,7 +594,7 @@
   </entry>
   <entry>
     <title>vue3.0知识点</title>
-    <url>/article/3b5882fc.html</url>
+    <url>/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<h2 id="1-手脚架"><a href="#1-手脚架" class="headerlink" title="1.手脚架"></a>1.手脚架</h2><h3 id="1-1-Vite"><a href="#1-1-Vite" class="headerlink" title="1.1 Vite"></a>1.1 Vite</h3><p>​        Vite 是一个固执的 web 开发构建工具，在开发过程中通过本地 ES Module 导入为代码提供服务，并将其与 Rollup 捆绑在一起用于生产。</p>
 <p>优点：</p>
 <ul>
@@ -543,16 +611,16 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install -g @vue&#x2F;cli # OR yarn global add @vue&#x2F;cli</span><br><span class="line">vue create hello-vue3</span><br></pre></td></tr></table></figure>
 
 <p>开始</p>
-<p><img src="/article/image-20201203111351386.png"></p>
+<p><img src="/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/image-20201203111351386.png"></p>
 <p>先择自选模板</p>
-<p><img src="/article/image-20201203111457267.png"></p>
+<p><img src="/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/image-20201203111457267.png"></p>
 <p>由于vue3.0兼容了typescript,同时vue3.0已经用Typescript编写了，那么这么好的东西怎么能不用呢？</p>
 <p>选择vue3.0 的项目创建方式</p>
-<p><img src="/article/image-20201203111651972.png"></p>
+<p><img src="/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/image-20201203111651972.png"></p>
 <p>嗯，这样就ok了，剩下的和vue2.0的步骤是一样的</p>
 <p>直接yes就行也可以</p>
 <p>创建后的目录</p>
-<p><img src="/article/image-20201203112856413.png"></p>
+<p><img src="/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/image-20201203112856413.png"></p>
 <p>接下来就是相关知识点了</p>
 <h2 id="2-vue3-0知识点"><a href="#2-vue3-0知识点" class="headerlink" title="2.vue3.0知识点"></a>2.vue3.0知识点</h2><h3 id="setup"><a href="#setup" class="headerlink" title="setup"></a>setup</h3><p>​    关键中的关键，vue3.0使用setup整合了所有的api。同时在只执行一次，并且是在生命周期函数执行开始之前执行，因此在setup上是不能访问this的。</p>
 <h4 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="comment">//定义变量 --ref稍后再说</span></span><br><span class="line">      <span class="keyword">const</span> str = ref(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">      <span class="keyword">let</span> fn = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="number">666</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="keyword">return</span>&#123;</span><br><span class="line">        <span class="comment">//返回出去使用的参数</span></span><br><span class="line">        str,</span><br><span class="line">        fn</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -659,7 +727,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class&#x3D;&quot;container&quot;&gt;</span><br><span class="line">     </span><br><span class="line">    &lt;GlobalHeader :user&#x3D;&quot;user&quot; &#x2F;&gt;</span><br><span class="line">       </span><br><span class="line">    &lt;teleport to&#x3D;&quot;#box&quot;&gt; &lt;GlobalHeader :user&#x3D;&quot;user&quot; &#x2F;&gt;&lt;&#x2F;teleport&gt;</span><br><span class="line">    &lt;!-- &lt;ColumnList :list&#x3D;&quot;list&quot; &#x2F;&gt; --&gt;</span><br><span class="line">    &lt;router-view&gt;&lt;&#x2F;router-view&gt;</span><br><span class="line">    &lt;!-- &lt;login &#x2F;&gt; --&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br></pre></td></tr></table></figure>
 
 <p>同样的一个子组件 GlobalHeader,但是一个使用了Teleport功能后，在不同的位置渲染出来了</p>
-<p><img src="/article/image-20201203170722282.png"></p>
+<p><img src="/2021/03/02/vue3-0%E7%9F%A5%E8%AF%86%E7%82%B9/image-20201203170722282.png"></p>
 <p>Teleport 提供了一种干净的方法，允许我们控制在 DOM 中哪个父节点下呈现 HTML，而不必求助于全局状态或将其拆分为两个组件。</p>
 <h2 id="3-vuex知识点变迁"><a href="#3-vuex知识点变迁" class="headerlink" title="3.vuex知识点变迁"></a>3.vuex知识点变迁</h2><p>使用 useStore 来获取 store 对象 从 vuex 中取值时，要注意必须使用 computed 进行包装，这样 vuex 中状态修改后才能在页面中响应</p>
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; createStore &#125; <span class="keyword">from</span> <span class="string">&#x27;vuex&#x27;</span></span><br><span class="line"><span class="comment">//创建vuex</span></span><br><span class="line"><span class="comment">// Create a new store instance.</span></span><br><span class="line"><span class="keyword">const</span> store = createStore(&#123;</span><br><span class="line">  state () &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      count: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  mutations: &#123;</span><br><span class="line">    increment (state) &#123;</span><br><span class="line">      state.count++</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">const</span> app = createApp(&#123; <span class="comment">/* your root component */</span> &#125;)</span><br><span class="line"><span class="comment">//挂载vuex</span></span><br><span class="line">app.use(store)</span><br></pre></td></tr></table></figure>
@@ -682,7 +750,7 @@
   </entry>
   <entry>
     <title>vue兼容IE</title>
-    <url>/article/a7903c60.html</url>
+    <url>/2021/03/05/vue%E5%85%BC%E5%AE%B9IE/</url>
     <content><![CDATA[<blockquote>
 <p>​    背景：由于Vue中使用了ES6语法，因此低版本的IE浏览器是不兼容IE的，在vue不做适配的情况下，vue所生成的网页用IE浏览器中打开只会出现一片空白，因此要用到使用<strong>babel-polyfill</strong>转换成ES5</p>
 </blockquote>
@@ -695,7 +763,7 @@
 
 <h4 id="配置main-js文件"><a href="#配置main-js文件" class="headerlink" title="配置main.js文件"></a>配置main.js文件</h4><p>​    注意：引入是必须放在main.js引入中的最前面，是最前面</p>
 <p>​        如图下所示</p>
-<p>​            <img src="/article/1571967941644.png"></p>
+<p>​            <img src="/2021/03/05/vue%E5%85%BC%E5%AE%B9IE/1571967941644.png"></p>
 <p>​    否则是无法应用babel-polyfill</p>
 <h4 id="在index-html中配置IE的兼容（非必要）"><a href="#在index-html中配置IE的兼容（非必要）" class="headerlink" title="在index.html中配置IE的兼容（非必要）"></a>在index.html中配置IE的兼容（非必要）</h4><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge,chrome=1&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -703,12 +771,12 @@
 
 <h4 id="最后在config中修改webpack-base-conf-js配置"><a href="#最后在config中修改webpack-base-conf-js配置" class="headerlink" title="最后在config中修改webpack.base.conf.js配置"></a>最后在config中修改webpack.base.conf.js配置</h4><p>​    有些工程师喜欢在建立vue项目的时候将webpack抛出，形成一个build文件，</p>
 <p>webpack.base.conf.js 就在该文件中</p>
-<p><img src="/article/1571968315173.png"></p>
+<p><img src="/2021/03/05/vue%E5%85%BC%E5%AE%B9IE/1571968315173.png"></p>
 <p>配置如下：</p>
 <p>​    未替换换前的配置</p>
-<p><img src="/article/1571968380488.png"></p>
+<p><img src="/2021/03/05/vue%E5%85%BC%E5%AE%B9IE/1571968380488.png"></p>
 <p>​    替换后的配置</p>
-<p>​    <img src="/article/1571968462815.png"></p>
+<p>​    <img src="/2021/03/05/vue%E5%85%BC%E5%AE%B9IE/1571968462815.png"></p>
 <p>步骤到目前就可以实现vue的项目在IE的运行了。</p>
 ]]></content>
       <categories>
@@ -719,76 +787,8 @@
       </tags>
   </entry>
   <entry>
-    <title>vue-cl3搭建项目</title>
-    <url>/article/8a4f8add.html</url>
-    <content><![CDATA[<h2 id="前置环境"><a href="#前置环境" class="headerlink" title="前置环境"></a>前置环境</h2><ol>
-<li><p>npm更新到最新</p>
-</li>
-<li><p>node &gt;=8.9 版本</p>
-</li>
-<li><p>全局安装了vue-cli</p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">npm</span> install -g @vue/cli</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装了vue</p>
-</li>
-</ol>
-<span id="more"></span>
-
-<h2 id="创建项目步骤"><a href="#创建项目步骤" class="headerlink" title="创建项目步骤"></a>创建项目步骤</h2><p>1.在新建的文件夹下创建项目 vue create my-project</p>
-<p><img src="/article/image-20200527162513494.png"></p>
-<p>指向的是ssr是因为上次配置过的cli3的配置，第一次执行create是没有的</p>
-<p>通过键盘上下键可以切换选项，也可以选默认(default)，也可以选择手动(Manally),如果选择default，那个一直回车就好了</p>
-<p>当然了需求不同，往往需要手动配置</p>
-<p><img src="/article/image-20200527163003709.png"></p>
-<p>2.手动配置的配置信息</p>
-<p>按照个人项目需求，选择需要的配置</p>
-<p>注意，空格是选中和取消，A键是全选</p>
-<p>TypeScript 支持使用 TypeScript 书写源码</p>
-<p> Progressive Web App (PWA) Support PWA 支持。</p>
-<p> Router 支持 vue-router 。</p>
-<p>Vuex 支持 vuex 。</p>
-<p>CSS Pre-processors 支持 CSS 预处理器。</p>
-<p> Linter / Formatter 支持代码风格检查和格式化。</p>
-<p> Unit Testing 支持单元测试。</p>
-<p> E2E Testing 支持 E2E 测试。</p>
-<p><img src="/article/image-20200527163437407.png"></p>
-<p>以上是我搭建Vue项目的配置信息</p>
-<p>3.当选了Router后会询问是否采用history，当然基本都是用的</p>
-<p><img src="/article/image-20200527163625559.png"></p>
-<p>4.css的预处理</p>
-<p><img src="/article/image-20200527163730822.png"></p>
-<p>我选了Sass</p>
-<p>5.我选择的是ESLint + Prettier</p>
-<p><img src="/article/image-20200527163943737.png"></p>
-<p>6.选择语法检查方式</p>
-<p>我自己选择保存就检测<br>第一个是保存检测，第二个是fix和commit的时候检测</p>
-<p><img src="/article/image-20200527164041148.png"></p>
-<p>7.单元测试，我选择了Mocha</p>
-<p><img src="/article/image-20200527164238990.png"></p>
-<p>8.配置文件存放地方<br>第一个是独立文件夹位置，第二个是在package.json文件里</p>
-<p><img src="/article/image-20200527164307971.png"></p>
-<p>9.询问是否记录这一次的配置，以便下次使用，如一开始的时候会显示的vuecli3配置</p>
-<p><img src="/article/image-20200527164327651.png"></p>
-<p>10.回车确定等待下载</p>
-<p><img src="/article/image-20200527164349916.png"></p>
-<p>11.下载后就可以启动和编写</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">cd my-project</span><br><span class="line">npm run serve</span><br></pre></td></tr></table></figure>
-
-<p><img src="/article/image-20200527164556028.png"></p>
-<p>12.vue-cli3.0的目录结构相比2.0而言要简介许多，没有了build和config等文件，当需要其他配置的时候需要自己去配置，比如说webpack配置</p>
-<p><img src="/article/image-20200527164806424.png"></p>
-<p>原文来自：<a href="https://www.jianshu.com/p/5e13bc2eb97c">vue-cli3快速创建项目</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Vue</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>vue响应式原理v2.0与v3.0的区别</title>
-    <url>/article/3b5b1403.html</url>
+    <url>/2021/03/02/vue%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86v2-0%E4%B8%8Ev3-0%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<h1 id="深入响应性原理"><a href="#深入响应性原理" class="headerlink" title="深入响应性原理"></a>深入响应性原理</h1><p>vue3.0放弃了Object.defineProperty，并 采用了Proxy来实现响应式的功能。</p>
 <p>vue2.0是使用Object.defineProperty来监控数据的变化的，其原理是通过发布者和订阅者（ getter/setter ）让 Vue 能够追踪依赖，在 property 被访问和修改时通知变更。</p>
 <p>但是这种方式具有极大的局限性，由于 JavaScript 的限制，Vue <strong>不能检测</strong>数组和对象的变化。</p>
@@ -803,7 +803,7 @@
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">defaultObject</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="title">constructor</span>(<span class="params">data</span>)</span> &#123;</span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">of</span> <span class="built_in">Object</span>.keys(data)) &#123;</span><br><span class="line">            <span class="comment">//判断该项是否为对象，如果是，那么就继续往下遍历</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span> data[key] == <span class="string">&quot;object&quot;</span>) &#123;</span><br><span class="line">              data[key] = <span class="keyword">new</span> defaultObject(data[key]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">Object</span>.defineProperty(<span class="built_in">this</span>, key, &#123;</span><br><span class="line">              <span class="comment">//当且仅当该属性的 configurable 键值为 true 时，该属性的描述符才能够被改变，同时该属性也能从对应的对象上被删除。</span></span><br><span class="line">              configurable: <span class="literal">true</span>,</span><br><span class="line">              <span class="comment">//当且仅当该属性的 enumerable 键值为 true 时，该属性才会出现在对象的枚举属性中。</span></span><br><span class="line">              enumerable: <span class="literal">true</span>,</span><br><span class="line">              <span class="function"><span class="title">get</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`你访问了<span class="subst">$&#123;key&#125;</span>:<span class="subst">$&#123;data[key]&#125;</span>`</span>);</span><br><span class="line">                <span class="keyword">return</span> data[key];</span><br><span class="line">              &#125;,</span><br><span class="line">              <span class="function"><span class="title">set</span>(<span class="params">val</span>)</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`你设置了<span class="subst">$&#123;key&#125;</span>:<span class="subst">$&#123;val&#125;</span>`</span>);</span><br><span class="line">                data[key] = val;</span><br><span class="line">              &#125;,</span><br><span class="line">            &#125;);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//对象</span></span><br><span class="line">      <span class="keyword">let</span> obj = &#123;</span><br><span class="line">        name: <span class="string">&quot;lzp&quot;</span>,</span><br><span class="line">        age: <span class="string">&quot;18&quot;</span>,</span><br><span class="line">      &#125;;</span><br><span class="line">      <span class="keyword">const</span> person = <span class="keyword">new</span> defaultObject(obj);</span><br><span class="line">      <span class="built_in">console</span>.log(person.name);</span><br><span class="line">      person.age = <span class="number">16</span>;</span><br><span class="line">      <span class="built_in">console</span>.log(person.age);</span><br><span class="line">	<span class="comment">//无法监听到对象的添加</span></span><br><span class="line">      person.sex = <span class="string">&quot;男&quot;</span>;</span><br><span class="line">      <span class="built_in">console</span>.log(person.sex);</span><br><span class="line"><span class="comment">//无法监听到对象的删除</span></span><br><span class="line">      <span class="keyword">delete</span> person.name;</span><br><span class="line">      <span class="built_in">console</span>.log(person.name);</span><br><span class="line">      <span class="comment">//数组</span></span><br><span class="line">      <span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">64</span>, <span class="number">10</span>];</span><br><span class="line">      <span class="keyword">const</span> arr2 = <span class="keyword">new</span> defaultObject(arr);</span><br><span class="line">      <span class="built_in">console</span>.log(arr2[<span class="number">0</span>]);</span><br><span class="line">      arr2[<span class="number">1</span>] = <span class="number">25</span>;</span><br><span class="line">      arr2[<span class="number">10</span>] = <span class="number">60</span>;</span><br><span class="line">      <span class="built_in">console</span>.log(arr2[<span class="number">10</span>]);</span><br><span class="line">      arr2.length = <span class="number">20</span>;</span><br><span class="line">      <span class="built_in">console</span>.log(arr2);</span><br></pre></td></tr></table></figure>
 
 <p>结果</p>
-<p><img src="/article/image-20201204145818270.png"></p>
+<p><img src="/2021/03/02/vue%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86v2-0%E4%B8%8Ev3-0%E7%9A%84%E5%8C%BA%E5%88%AB/image-20201204145818270.png"></p>
 <p>不止如此，Object.defineProperty通过遍历所有的属性，当数据量一大起来，加载速度就无比的慢。</p>
 <p>还有，由于Object.defineProperty是监听所有属性的变化，那么如果数据量巨大的话，所占的内存也会无比的多</p>
 <h2 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a><strong>Proxy</strong></h2><p><strong>Proxy</strong> 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。</p>
@@ -818,7 +818,7 @@
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj2 = &#123;</span><br><span class="line">  name: <span class="string">&quot;lzp&quot;</span>,</span><br><span class="line">  interest: &#123;</span><br><span class="line">    game: <span class="string">&quot;lol&quot;</span>,</span><br><span class="line">    move: <span class="string">&quot;钢铁侠&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> p = <span class="keyword">new</span> <span class="built_in">Proxy</span>(obj2, &#123;</span><br><span class="line">  <span class="function"><span class="title">get</span>(<span class="params">target, prop, receiver</span>)</span> &#123;</span><br><span class="line">    <span class="comment">//   track(target, prop);</span></span><br><span class="line">    <span class="comment">//   console.log(arguments);</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`你访问了<span class="subst">$&#123;prop&#125;</span>:<span class="subst">$&#123;target[prop]&#125;</span>`</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(...arguments);</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">set</span>(<span class="params">target, key, value, receiver</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(value);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`你设置了<span class="subst">$&#123;key&#125;</span>:<span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(value)&#125;</span>`</span>);</span><br><span class="line">    <span class="built_in">Reflect</span>.set(...arguments);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">p.name = <span class="string">&quot;lzp2&quot;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(p.name);</span><br><span class="line">p.sex = <span class="string">&quot;男&quot;</span>;</span><br><span class="line">p.interest.game = <span class="string">&quot;守望先锋&quot;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(p.interest.game);</span><br></pre></td></tr></table></figure>
 
 <p>结果</p>
-<p><img src="/article/image-20201204154809023.png"></p>
+<p><img src="/2021/03/02/vue%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86v2-0%E4%B8%8Ev3-0%E7%9A%84%E5%8C%BA%E5%88%AB/image-20201204154809023.png"></p>
 <p>由上可知，新增或编辑属性，并不需要重新添加响应式处理，都能监听的到<br>因为 Proxy 是对对象的操作，只要你访问对象，就会走到 Proxy 的逻辑中</p>
 <h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><p>Proxy 和 Object.defineProperty 的使用方法看似很相似，其实 Proxy 是在更高维度上去拦截属性的</p>
 <p><strong>Object.defineProperty</strong></p>
@@ -883,8 +883,88 @@
       </tags>
   </entry>
   <entry>
+    <title>vue组件通信</title>
+    <url>/2021/03/15/vue%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<span id="more"></span>        
+
+<h2 id="prop-emit"><a href="#prop-emit" class="headerlink" title="prop/$emit"></a>prop/$emit</h2><p>父组件：通过<code>prop</code>的方式向子组件传递数据</p>
+<p>子组件：通过<code>$emit</code>可以向父组件通信。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    当前选中：&#123;&#123; current &#125;&#125;</span><br><span class="line">    &lt;Child :list=<span class="string">&quot;list&quot;</span> @change=<span class="string">&quot;changeCurrent&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      current: <span class="number">0</span>,</span><br><span class="line">      list: [<span class="string">&quot;红楼梦&quot;</span>, <span class="string">&quot;水浒传&quot;</span>, <span class="string">&quot;三国演义&quot;</span>, <span class="string">&quot;西游记&quot;</span>]</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">changeCurrent</span>(<span class="params">num</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//监听子组件传过来的数据</span></span><br><span class="line">      <span class="built_in">this</span>.current = num;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in list&quot;</span>&gt;</span><br><span class="line">      &lt;div @click=<span class="string">&quot;clickItem(index)&quot;</span> :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    list: &#123;</span><br><span class="line">      type: <span class="built_in">Array</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickItem</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;change&quot;</span>, index);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<p>​    传值取值方便简洁明了</p>
+<p>缺点：</p>
+<ol>
+<li>由于数据是单向传递，如果子组件需要改变父组件的props值每次需要给子组件绑定对应的监听事件。</li>
+<li>如果父组件需要给孙组件传值，需要子组件进行转发，较为不便。</li>
+</ol>
+<h2 id="sync修饰符"><a href="#sync修饰符" class="headerlink" title=".sync修饰符"></a>.sync修饰符</h2><p>在子组件能够直接修改父组件的prop值</p>
+<p><code>vue1.x</code> 时，曾作为双向绑定功能存在，即子组件可以修改父组件中的值</p>
+<p><code>vue2.0</code>时，违反了单向数据流的设计理念–删除</p>
+<p><code>vue2.3.0+</code>是，重新引入，作为一个编译时的语法糖存在—它会被扩展为一个自动更新父组件属性的<code>v-on</code>监听器。说白了就是手动进行更新父组件中的值了，从而使数据改动来源更加的明显。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child :msg.sync=<span class="string">&quot;msg&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;way2&quot;</span>,</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      msg: <span class="string">&quot;hello every guys&quot;</span>,</span><br><span class="line">      num: <span class="number">0</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在Child组件传值时给每个值添加一个.sync修饰，在编译时会被扩展为如下代码：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;Child :msg=<span class="string">&quot;msg&quot;</span> @update.msg=<span class="string">&quot;val =&gt; msg = val&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span> @update.num=<span class="string">&quot;val =&gt; num = val&quot;</span>&gt;&lt;/Child&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此子组件中只需要显示的触发update的更新事件：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickRevert&quot;</span>&gt;点击更新字符串：&#123;&#123; msg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;当前值：&#123;&#123; num &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;add&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;+&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;sub&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;-&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    msg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    num: &#123;</span><br><span class="line">      type: <span class="built_in">Number</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickRevert</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; msg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:msg&quot;</span>,msg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>));</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">clickOpt</span>(<span class="params">type = <span class="string">&quot;&quot;</span></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; num &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="keyword">if</span> (type == <span class="string">&quot;add&quot;</span>) &#123;</span><br><span class="line">        num++;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        num--;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:num&quot;</span>, num);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>和<code>v-model</code>同理，v-model本质上也是一种语法糖，只不过它触发的不是update方法而是input方法；而且v-model没有.sync来的更加灵活，v-model只能绑定一个值</p>
+<h2 id="attrs和-listeners"><a href="#attrs和-listeners" class="headerlink" title="$attrs和$listeners"></a>$attrs和$listeners</h2><p>当从A到C的跨级通信时，prop传值会非常麻烦，会有很多冗余繁琐的转发操作；如果C中的状态改变还需要传递给A，使用事件还需要一级一级的向上传递，代码可读性就更差了。</p>
+<p><img src="/2021/03/15/vue%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/attrs.jpg"></p>
+<p>解决方案 ：<code>vue2.4+</code>版本提供了新的方案：<code>$attrs和$listeners</code>，</p>
+<blockquote>
+<p>`$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 (class 和 style 除外)，并且可以通过 v-bind=”$attrs” 传入内部组件——在创建高级别的组件时非常有用。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child</span><br><span class="line">      :notUse=<span class="string">&quot;&#x27;not-use&#x27;&quot;</span> <span class="comment">// 没用的信息</span></span><br><span class="line">      :childMsg=<span class="string">&quot;childMsg&quot;</span>  <span class="comment">// 传给子组件的信息</span></span><br><span class="line">      :grandChildMsg=<span class="string">&quot;grandChildMsg&quot;</span>  <span class="comment">//传给孙组件的信息</span></span><br><span class="line">      @onChildMsg=<span class="string">&quot;onChildMsg&quot;</span>  <span class="comment">// 子组件function</span></span><br><span class="line">      @onGrandChildMsg=<span class="string">&quot;onGrandChildMsg&quot;</span>  <span class="comment">//孙组件function</span></span><br><span class="line">    &gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childMsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandChildMsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">onChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childMsg = msg;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">onGrandChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.grandChildMsg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickMsg&quot;</span>&gt;&#123;&#123; childMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;$attrs: &#123;&#123; $attrs &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild v-bind=<span class="string">&quot;$attrs&quot;</span> v-on=<span class="string">&quot;$listeners&quot;</span>&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    childMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; childMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">          <span class="string">&quot;onChildMsg&quot;</span>,</span><br><span class="line">          childMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; GrandChild &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在子组件中，通过props获取子组件所需要的参数，即childMsg；</p>
+<p>剩余的参数就被归到了<code>$attrs</code>对象中，然后把它继续往孙组件中传；同时把所有的监听函数归到$listeners，也继续往下传。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box1&quot;</span> @click=<span class="string">&quot;clickMsg&quot;</span>&gt;grand-child:&#123;&#123; grandChildMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    grandChildMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; grandChildMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">        <span class="string">&quot;onGrandChildMsg&quot;</span>,</span><br><span class="line">        grandChildMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>总结：$attrs和$listeners很好的解决了<code>跨一级</code>组件传值的问题。但是不适合做多级组件的传值问题</p>
+<h2 id="provide和inject"><a href="#provide和inject" class="headerlink" title="provide和inject"></a>provide和inject</h2><p>用来做多级组件数据的传值</p>
+<p>provide/inject是<code>vue2.2+</code>版本新增的属性，简单来说就是父组件中通过provide来提供变量, 然后再子组件中通过inject来注入变量。这里inject注入的变量不像<code>$attrs</code>，只能向下一层；inject不论子组件嵌套有多深，都能获取到。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandmsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">    <span class="comment">//提供变量</span></span><br><span class="line">  <span class="function"><span class="title">provide</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="built_in">this</span>.childmsg,</span><br><span class="line">      grandmsg: <span class="built_in">this</span>.grandmsg</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childmsg = <span class="string">&quot;hello new child&quot;</span>;</span><br><span class="line">      <span class="built_in">this</span>.grandmsg = <span class="string">&quot;hello new grand child&quot;</span>;</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">  components: &#123; GrandChild &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;GrandChild&quot;</span>,</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：</p>
+<p>​    1.一旦子组件注入了某个数据，在data中就不能再声明这个数据了</p>
+<p>​    2.<code>provide</code> 和 <code>inject</code> 绑定并不是可响应的。这是刻意为之的。然而，如果你传入了一个可监听的对象，那么其对象的属性还是可响应的</p>
+<h2 id="EventBus-—兄弟间组件通行"><a href="#EventBus-—兄弟间组件通行" class="headerlink" title="EventBus —兄弟间组件通行"></a>EventBus —兄弟间组件通行</h2><p>实际上是创建一个vue实例，通过一个空的vue实例作为桥梁实现vue组件间的通信。它是实现非父子组件通信的一种解决方案，所有的组件都可以上下平行地通知其他组件，但也就是太方便所以若使用不慎，就会造成难以维护的“灾难”</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//utils/event-bus.js</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Vue();</span><br></pre></td></tr></table></figure>
+
+<p>首先创造一个空的vue对象并将其导出，他是一个不具备<code>DOM</code>的组件，它具有的仅仅只是它实例方法而已，因此它非常的轻便。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//main.js</span></span><br><span class="line"><span class="keyword">import</span> bus <span class="keyword">from</span> <span class="string">&quot;@/utils/event-bus&quot;</span>;</span><br><span class="line">Vue.prototype.$bus = bus;</span><br></pre></td></tr></table></figure>
+
+<p>将其挂载到全局，变成全局的事件总线，这样在组件中就能很方便的调用了。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;Child1&gt;&lt;/Child1&gt;</span><br><span class="line">    &lt;Child2&gt;&lt;/Child2&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child1 <span class="keyword">from</span> <span class="string">&quot;./child1&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> Child2 <span class="keyword">from</span> <span class="string">&quot;./child2&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child1,</span><br><span class="line">    Child2</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实现兄弟组件间的通信</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child1.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg1&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg2&quot;</span>, <span class="string">&quot;hello from1:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//child2.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg2&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg1&quot;</span>, <span class="string">&quot;hello from2:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用不善，EventBus会是一种灾难，到底是什么样的“灾难”了？大家都知道vue是单页应用，如果你在某一个页面刷新了之后，与之相关的EventBus会被移除，这样就导致业务走不下去。还要就是如果业务有反复操作的页面，EventBus在监听的时候就会触发很多次，也是一个非常大的隐患。这时候我们就需要好好处理EventBus在项目中的关系。通常会用到，在页面或组件销毁时，同时移除EventBus事件监听。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>&#123;</span><br><span class="line">    <span class="function"><span class="title">destroyed</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        $EventBus.$off(<span class="string">&#x27;event-name&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：EventBus可以用来很方便的实现兄弟组件和跨级组件的通信，但是使用不当时也会带来很多问题；所以适合逻辑并不复杂的小页面，逻辑复杂时还是建议使用vuex。</p>
+<p>原文来源：<a href="https://zhuanlan.zhihu.com/p/119350263">Vue中组件通信的方式</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>事件循环---Event Loop</title>
-    <url>/article/8215732c.html</url>
+    <url>/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    javascript是一门单线程的非阻塞的脚本语言。最基本的用途就是与浏览器交互。</p>
 <p>单线程–基于该用途，使得javascript不可能成为多线程，因为在浏览器中，我们需要对各种各样的dom操作，单线程确保了一次只能对dom进行一次操作，假若javascript是一门多线程语言，就有可能遇到多个线程对同一个dom进行操作，一个往其中添加事件，一个删除了这个dom，这时就会出现bug。</p>
 <p>javascript的另一个特点就是非阻塞，至于javascript是如何做到非阻塞的呢，答案就是本文要记录的—event loop（事件循环）</p>
@@ -897,11 +977,11 @@
 <h5 id="（1）、执行栈"><a href="#（1）、执行栈" class="headerlink" title="（1）、执行栈"></a>（1）、执行栈</h5><p>当我们在调用一个方法是，js会生成一个与这个方法对应的执行环境（context），也叫执行上下文。这个执行环境中存在着这个方法的私有作用域、上层作用域的指向、方法的参数、作用域中定义的变量以及这个作用域的this对象。而当一系列方法被依次调用的时候，由于js是单线程的，一次只能执行一个方法，于是这些方法被排在了一个单独的地方—执行栈。</p>
 <p>当一个js被第一次执行的时候，js引擎会解析这段代码，并将其中的同步代码按照执行顺序加入执行栈中，然后从头开始执行。如果这个执行的是一个方法，那么js会往执行栈中添加这个方法的执行环境，然后进入这个执行环境继续执行其中代码。当这个执行环境中的代码执行完毕并返回结果后，js会推出这个执行环境并将该执行环境销毁，回到上一个方法的执行环境，这个过程会反复执行，知道执行栈中的代码全部执行完毕。</p>
 <p>由下图显示，其中的global就是初次运行脚本时向执行栈中加入的代码：</p>
-<p><img src="/article/%E6%A0%88gif.webp" alt="栈gif"></p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E6%A0%88gif.webp" alt="栈gif"></p>
 <p>由上图可知，一个方法执行会向执行栈中加入这个方法的执行环境，在这个执行环境中还可以调用其他方法，甚至是自己，其结果不过是在执行栈中再添加一个执行环境。这个过程可以是无限进行下去的，除非发生了栈溢出，即超过了所能使用内存的最大值。</p>
 <p>当然上述所说的是同步代码的执行。接下就是异步的了</p>
 <h5 id="（2）、事件队列"><a href="#（2）、事件队列" class="headerlink" title="（2）、事件队列"></a>（2）、事件队列</h5><p>js引擎在遇到一个异步事件后并不会等待其返回结果，而是将这个事件挂起，继续执行执行栈中的其他任务。当一个异步事件返回结果后，js会将这个事件加入与当前执行栈不同的另一个队列中，即事件队列。被放进事件队列中不会立即执行其回调，而是等待当前执行栈中的所有任务都执行完毕，待主线程处于闲置状态是，主线程会去查看事件队列中是否有任务。如果有，那么主线程会从中取出排在第一位的事件，并把这个事件对应的回调函数存进执行栈中，然后执行其中的同步代码，如此反复，就形成了一个无限的循环，这就是事件循环</p>
-<p><img src="/article/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
+<p><img src="/2021/02/24/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-Event-Loop/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.jpg" alt="事件循环"></p>
 <p>图中的stack表示我们所说的执行栈，web apis则是代表一些异步事件，而callback queue即事件队列。</p>
 <h4 id="2、macro-task与micro-task"><a href="#2、macro-task与micro-task" class="headerlink" title="2、macro task与micro task"></a>2、macro task与micro task</h4><p>以上的事件循环过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。</p>
 <p>以下事件属于宏任务：</p>
@@ -986,7 +1066,7 @@
   </entry>
   <entry>
     <title>事件节流和事件防抖</title>
-    <url>/article/d65d4db3.html</url>
+    <url>/2021/03/05/%E4%BA%8B%E4%BB%B6%E8%8A%82%E6%B5%81%E5%92%8C%E4%BA%8B%E4%BB%B6%E9%98%B2%E6%8A%96/</url>
     <content><![CDATA[<blockquote>
 <p>当一些事件被频繁出发导致页面出现卡顿甚至是死循环，这时就需要通过事件节流或者事件防抖来解决该事情</p>
 </blockquote>
@@ -1021,7 +1101,7 @@
   </entry>
   <entry>
     <title>初步了解Promise</title>
-    <url>/article/f3d1af61.html</url>
+    <url>/2021/02/24/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3Promise/</url>
     <content><![CDATA[<blockquote>
 <p>​    Promise是一个对象，用于表示一个异步请求操作的最终结果（不管是成功和失败），并将其结果值返回出去，在当前的javascript程序中，promise用法众多，是一种十分流行的异步编程方式</p>
 </blockquote>
@@ -1041,7 +1121,7 @@
 <p>​        3.<code>rejected</code>：代表操作失败</p>
 <p>​    当promise返回任意一种结果的时候，Promise对象的then方法绑定的处理方法就会被执行。</p>
 <p>​    重点：<code>Promise.prototype.then</code> 和<code>Promise.prototype.catch</code> 返回的都是Promise对象，因此他们可以被链式调用</p>
-<p><img src="/article/promises.png" alt="promises"></p>
+<p><img src="/2021/02/24/%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3Promise/promises.png" alt="promises"></p>
 <h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="1、Promise-all-iterable"><a href="#1、Promise-all-iterable" class="headerlink" title="1、Promise.all(iterable)"></a>1、<strong>Promise.all(iterable)</strong></h4><p>​        **Promise.all(iterable)**方法返回一个Promise实例，该实例在iterable参数内所有的promise都完成（resolved）或参数中不包含 <code>promise</code> 时回调完成（resolve）；如果参数中  <code>promise</code> 有一个失败（rejected），此实例回调失败（reject），失败原因的是第一个失败 <code>promise</code> 的结果。</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">//一个成功的回掉</span></span><br><span class="line"><span class="keyword">var</span> p1 = <span class="built_in">Promise</span>.resolve(<span class="number">3</span>);</span><br><span class="line"><span class="comment">//一个String类型</span></span><br><span class="line"><span class="keyword">var</span> p2 = <span class="number">4</span>;</span><br><span class="line"><span class="comment">//异步完成的操作</span></span><br><span class="line"><span class="keyword">var</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(resolve,<span class="number">100</span>,<span class="string">&#x27;foo&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//一个异步失败的操作</span></span><br><span class="line"><span class="keyword">var</span> p4 =  <span class="built_in">Promise</span>.reject(<span class="number">5</span>)</span><br><span class="line"><span class="comment">//所有参数都返回完成状态</span></span><br><span class="line"><span class="built_in">Promise</span>.all([p1,p2,p3]).then(<span class="function"><span class="params">res</span>=&gt;</span>&#123;</span><br><span class="line">    输出结果</span><br><span class="line">    <span class="built_in">console</span>.log(res)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//[3,4,&#x27;foo&#x27;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//p4返回一个错误，则立即停止操作并将错误返回</span></span><br><span class="line"><span class="built_in">Promise</span>.all([p1,p2,p3,p4]).then(<span class="function"><span class="params">res</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res)</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span>=&gt;</span>&#123;</span><br><span class="line">    <span class="comment">//通过catch捕获错误，并将其返回输出出来</span></span><br><span class="line">    <span class="built_in">console</span>.log(err)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//5</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -1077,54 +1157,8 @@
       </tags>
   </entry>
   <entry>
-    <title>神奇的定时器</title>
-    <url>/article/3ddfe2d3.html</url>
-    <content><![CDATA[<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><blockquote>
-<p>与传统的定时器setTimeout和setInterval不同，requestAnimationFrame不需要设置任何的时间间隔，这样是为什么呢？为什么requestAnimationFrame会被成为神奇的定时器呢？</p>
-</blockquote>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    计时器一直是javascript动画的核心技术。而编写动画循环的关键是要知道延迟时间多长合适。一方面，循环间隔必须足够短，这样才能让不同的动画效果显得平滑流畅；另一方面，循环间隔还要足够长，这样才能确保浏览器有能力渲染产生的变化。</p>
-<p>​    大多数电脑显示器的刷新频率是60Hz，大概相当于每秒钟重绘60次。大多数浏览器都会对重绘操作加以限制，不超过显示器的重绘频率，因为即使超过那个频率用户体验也不会有提升。因此，最平滑动画的最佳循环间隔是1000ms/60，约等于16.6ms</p>
-<p>　　而setTimeout和setInterval的问题是，它们都不精确。它们的内在运行机制决定了时间间隔参数实际上只是指定了把动画代码添加到浏览器UI线程队列中以等待执行的时间。如果队列前面已经加入了其他任务，那动画代码就要等前面的任务完成后再执行</p>
-<p>　　requestAnimationFrame采用系统时间间隔，保持最佳绘制效率，不会因为间隔时间过短，造成过度绘制，增加开销；也不会因为间隔时间太长，使用动画卡顿不流畅，让各种网页动画效果能够有一个统一的刷新机制，从而节省系统资源，提高系统性能，改善视觉效果</p>
-<span id="more"></span>
-
-<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>​    【1】requestAnimationFrame会把每一帧中的所有DOM操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率</p>
-<p>​    【2】在隐藏或不可见的元素中，requestAnimationFrame将不会进行重绘或回流，这当然就意味着更少的CPU、GPU和内存使用量</p>
-<p>​    【3】requestAnimationFrame是由浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停，有效节省了CPU开销</p>
-<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置定时器</span></span><br><span class="line"><span class="keyword">let</span> time = requestAnimationFrame(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">666</span>);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//清除定时器</span></span><br><span class="line">cancelAnimationFrame(time);</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="兼容"><a href="#兼容" class="headerlink" title="兼容"></a>兼容</h3><p>​    IE9-不兼容</p>
-<p>简单兼容</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.requestAnimationFrame) &#123;</span><br><span class="line">    requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(fn, <span class="number">17</span>);</span><br><span class="line">    &#125;;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>严格模式</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="built_in">window</span>.requestAnimationFrame)&#123;</span><br><span class="line">    <span class="keyword">var</span> lastTime = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">window</span>.requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">callback</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> currTime = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">        <span class="keyword">var</span> timeToCall = <span class="built_in">Math</span>.max(<span class="number">0</span>,<span class="number">16.7</span>-(currTime - lastTime));</span><br><span class="line">        <span class="keyword">var</span> id  = <span class="built_in">window</span>.setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            callback(currTime + timeToCall);</span><br><span class="line">        &#125;,timeToCall);</span><br><span class="line">        lastTime = currTime + timeToCall;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>兼容清除定时器</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.cancelAnimationFrame) &#123;</span><br><span class="line">    <span class="built_in">window</span>.cancelAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">clearTimeout</span>(id);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="简单应用"><a href="#简单应用" class="headerlink" title="简单应用"></a>简单应用</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myDiv&quot;</span> style=<span class="string">&quot;background-color: lightblue;width: 0;height: 20px;line-height: 20px;&quot;</span>&gt;<span class="number">0</span>%&lt;/div&gt;</span><br><span class="line">&lt;button id=<span class="string">&quot;btn&quot;</span>&gt;run&lt;/button&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">var</span> timer;</span><br><span class="line">btn.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    myDiv.style.width = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    cancelAnimationFrame(timer);</span><br><span class="line">    timer = requestAnimationFrame(<span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">parseInt</span>(myDiv.style.width) &lt; <span class="number">500</span>)&#123;</span><br><span class="line">            myDiv.style.width = <span class="built_in">parseInt</span>(myDiv.style.width) + <span class="number">5</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">            myDiv.innerHTML =     <span class="built_in">parseInt</span>(myDiv.style.width)/<span class="number">5</span> + <span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">            timer = requestAnimationFrame(fn);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            cancelAnimationFrame(timer);</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>原文来源：<a href="https://www.cnblogs.com/xiaohuochai/p/5777186.html">https://www.cnblogs.com/xiaohuochai/p/5777186.html</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>javascript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>微信小程序常见问题</title>
-    <url>/article/16ccc336.html</url>
+    <url>/2021/03/05/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<blockquote>
 <p>开发遇到的问题</p>
 </blockquote>
@@ -1169,8 +1203,54 @@
       </tags>
   </entry>
   <entry>
+    <title>神奇的定时器</title>
+    <url>/2021/02/25/%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><blockquote>
+<p>与传统的定时器setTimeout和setInterval不同，requestAnimationFrame不需要设置任何的时间间隔，这样是为什么呢？为什么requestAnimationFrame会被成为神奇的定时器呢？</p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>​    计时器一直是javascript动画的核心技术。而编写动画循环的关键是要知道延迟时间多长合适。一方面，循环间隔必须足够短，这样才能让不同的动画效果显得平滑流畅；另一方面，循环间隔还要足够长，这样才能确保浏览器有能力渲染产生的变化。</p>
+<p>​    大多数电脑显示器的刷新频率是60Hz，大概相当于每秒钟重绘60次。大多数浏览器都会对重绘操作加以限制，不超过显示器的重绘频率，因为即使超过那个频率用户体验也不会有提升。因此，最平滑动画的最佳循环间隔是1000ms/60，约等于16.6ms</p>
+<p>　　而setTimeout和setInterval的问题是，它们都不精确。它们的内在运行机制决定了时间间隔参数实际上只是指定了把动画代码添加到浏览器UI线程队列中以等待执行的时间。如果队列前面已经加入了其他任务，那动画代码就要等前面的任务完成后再执行</p>
+<p>　　requestAnimationFrame采用系统时间间隔，保持最佳绘制效率，不会因为间隔时间过短，造成过度绘制，增加开销；也不会因为间隔时间太长，使用动画卡顿不流畅，让各种网页动画效果能够有一个统一的刷新机制，从而节省系统资源，提高系统性能，改善视觉效果</p>
+<span id="more"></span>
+
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>​    【1】requestAnimationFrame会把每一帧中的所有DOM操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率</p>
+<p>​    【2】在隐藏或不可见的元素中，requestAnimationFrame将不会进行重绘或回流，这当然就意味着更少的CPU、GPU和内存使用量</p>
+<p>​    【3】requestAnimationFrame是由浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停，有效节省了CPU开销</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置定时器</span></span><br><span class="line"><span class="keyword">let</span> time = requestAnimationFrame(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">666</span>);</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//清除定时器</span></span><br><span class="line">cancelAnimationFrame(time);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="兼容"><a href="#兼容" class="headerlink" title="兼容"></a>兼容</h3><p>​    IE9-不兼容</p>
+<p>简单兼容</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.requestAnimationFrame) &#123;</span><br><span class="line">    requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(fn, <span class="number">17</span>);</span><br><span class="line">    &#125;;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>严格模式</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="built_in">window</span>.requestAnimationFrame)&#123;</span><br><span class="line">    <span class="keyword">var</span> lastTime = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">window</span>.requestAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">callback</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> currTime = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">        <span class="keyword">var</span> timeToCall = <span class="built_in">Math</span>.max(<span class="number">0</span>,<span class="number">16.7</span>-(currTime - lastTime));</span><br><span class="line">        <span class="keyword">var</span> id  = <span class="built_in">window</span>.setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            callback(currTime + timeToCall);</span><br><span class="line">        &#125;,timeToCall);</span><br><span class="line">        lastTime = currTime + timeToCall;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>兼容清除定时器</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">window</span>.cancelAnimationFrame) &#123;</span><br><span class="line">    <span class="built_in">window</span>.cancelAnimationFrame = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">clearTimeout</span>(id);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="简单应用"><a href="#简单应用" class="headerlink" title="简单应用"></a>简单应用</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myDiv&quot;</span> style=<span class="string">&quot;background-color: lightblue;width: 0;height: 20px;line-height: 20px;&quot;</span>&gt;<span class="number">0</span>%&lt;/div&gt;</span><br><span class="line">&lt;button id=<span class="string">&quot;btn&quot;</span>&gt;run&lt;/button&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">var</span> timer;</span><br><span class="line">btn.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    myDiv.style.width = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    cancelAnimationFrame(timer);</span><br><span class="line">    timer = requestAnimationFrame(<span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">parseInt</span>(myDiv.style.width) &lt; <span class="number">500</span>)&#123;</span><br><span class="line">            myDiv.style.width = <span class="built_in">parseInt</span>(myDiv.style.width) + <span class="number">5</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">            myDiv.innerHTML =     <span class="built_in">parseInt</span>(myDiv.style.width)/<span class="number">5</span> + <span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">            timer = requestAnimationFrame(fn);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            cancelAnimationFrame(timer);</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>原文来源：<a href="https://www.cnblogs.com/xiaohuochai/p/5777186.html">https://www.cnblogs.com/xiaohuochai/p/5777186.html</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>首屏加载优化</title>
-    <url>/article/619ce754.html</url>
+    <url>/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/</url>
     <content><![CDATA[<blockquote>
 <p>背景：当vue的项目在上线后，由于各种原因导致第一次加载时过慢，因此需要通过各种方法解决该问题</p>
 </blockquote>
@@ -1185,12 +1265,12 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install --save-dev webpack-bundle-analyzer &#x2F;&#x2F;npm安装</span><br><span class="line">yarn add -s webpack-bundle-analyzer -D&#x2F;&#x2F;yarn 安装</span><br></pre></td></tr></table></figure>
 
 <p>​        配置：</p>
-<p>​            通常在webpack.prod.conf.js中实现配置<img src="/article/1572861741246.png" alt="webpack配置"></p>
+<p>​            通常在webpack.prod.conf.js中实现配置<img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861741246.png" alt="webpack配置"></p>
 <p> 配置代码为：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> BundleAnalyzerPlugin(&#123;</span><br><span class="line">    analyzerMode: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">    analyzerHost: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">    analyzerPort: <span class="number">8888</span>, <span class="comment">// 运行后的端口号</span></span><br><span class="line">    reportFilename: <span class="string">&#x27;report.html&#x27;</span>,</span><br><span class="line">    defaultSizes: <span class="string">&#x27;parsed&#x27;</span>,</span><br><span class="line">    openAnalyzer: <span class="literal">true</span>,</span><br><span class="line">    generateStatsFile: <span class="literal">false</span>,</span><br><span class="line">    statsFilename: <span class="string">&#x27;stats.json&#x27;</span>,</span><br><span class="line">    statsOptions: <span class="literal">null</span>,</span><br><span class="line">    logLevel: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 <p>当项目build后会出现一个页面，其中包含各种的占比和其大小，根据该图能针对不同的包进行操作。</p>
-<p><img src="/article/1572861934155.png" alt="包裹大小"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572861934155.png" alt="包裹大小"></p>
 <h4 id="2-element-ui的按需加载"><a href="#2-element-ui的按需加载" class="headerlink" title="2.element-ui的按需加载"></a>2.element-ui的按需加载</h4><p>​        当element-ui全局引入时，打包出来的文件十分大，因此要按需引入</p>
 <p>​        但想对element-ui按需加载需要需要组件来帮助<a href="https://github.com/QingWei-Li/babel-plugin-component">babel-plugin-component</a></p>
 <p>​        首先，安装 babel-plugin-component：</p>
@@ -1203,12 +1283,12 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; Button, Select &#125; <span class="keyword">from</span> <span class="string">&#x27;element-ui&#x27;</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line">Vue.component(Button.name, Button)</span><br><span class="line">Vue.component(Select.name, Select)</span><br><span class="line"><span class="comment">/* 或写为</span></span><br><span class="line"><span class="comment"> * Vue.use(Button)</span></span><br><span class="line"><span class="comment"> * Vue.use(Select)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
 <p>实现效果如下：</p>
-<p><img src="/article/1572862377991.png" alt="按需加载"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862377991.png" alt="按需加载"></p>
 <h4 id="3-组件按需加载"><a href="#3-组件按需加载" class="headerlink" title="3.组件按需加载"></a>3.组件按需加载</h4><p>​        如图所示</p>
-<p><img src="/article/1572862490945.png" alt="组件按需加载"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862490945.png" alt="组件按需加载"></p>
 <h4 id="4-cdn引入"><a href="#4-cdn引入" class="headerlink" title="4.cdn引入"></a>4.cdn引入</h4><p>​        在index.html中引入cdn资源</p>
 <p>​            如图所示</p>
-<p><img src="/article/1572862844298.png" alt="cdn"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572862844298.png" alt="cdn"></p>
 <p>​        修改 build/webpack.base.conf.js ，添加或修改externals</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">externals: &#123;</span><br><span class="line">    <span class="string">&#x27;vue&#x27;</span>: <span class="string">&#x27;Vue&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vue-router&#x27;</span>: <span class="string">&#x27;VueRouter&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;vuex&#x27;</span>: <span class="string">&#x27;Vuex&#x27;</span>,</span><br><span class="line">     <span class="string">&#x27;axios&#x27;</span>: <span class="string">&#x27;axios&#x27;</span> </span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
 
@@ -1223,7 +1303,7 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">webpackConfig.plugins.push(</span><br><span class="line">       <span class="keyword">new</span> CompressionWebpackPlugin(&#123;</span><br><span class="line">           asset: <span class="string">&#x27;[path].gz[query]&#x27;</span>,</span><br><span class="line">           algorithm: <span class="string">&#x27;gzip&#x27;</span>,</span><br><span class="line">           test: <span class="keyword">new</span> <span class="built_in">RegExp</span>(</span><br><span class="line">               <span class="string">&#x27;\\.(&#x27;</span> +</span><br><span class="line">               config.build.productionGzipExtensions.join(<span class="string">&#x27;|&#x27;</span>) +</span><br><span class="line">               <span class="string">&#x27;)$&#x27;</span></span><br><span class="line">           ),</span><br><span class="line">           threshold: <span class="number">10240</span>,</span><br><span class="line">           minRatio: <span class="number">0.8</span></span><br><span class="line">       &#125;)</span><br><span class="line">   )</span><br></pre></td></tr></table></figure>
 
 <p>最后在config/index.js中将productionGzip设置为true就可以了</p>
-<p><img src="/article/1572916447286.png" alt="config修改"></p>
+<p><img src="/2021/02/24/%E9%A6%96%E5%B1%8F%E5%8A%A0%E8%BD%BD%E4%BC%98%E5%8C%96/1572916447286.png" alt="config修改"></p>
 <p>​    然后到了服务器配置了，我用的node作为服务器运行，因此讲下如何配置node的</p>
 <p>​        1.express</p>
 <p>​            先安装一个依赖</p>
@@ -1255,88 +1335,8 @@
       </tags>
   </entry>
   <entry>
-    <title>vue组件通信</title>
-    <url>/article/b0f8c1e6.html</url>
-    <content><![CDATA[<span id="more"></span>        
-
-<h2 id="prop-emit"><a href="#prop-emit" class="headerlink" title="prop/$emit"></a>prop/$emit</h2><p>父组件：通过<code>prop</code>的方式向子组件传递数据</p>
-<p>子组件：通过<code>$emit</code>可以向父组件通信。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    当前选中：&#123;&#123; current &#125;&#125;</span><br><span class="line">    &lt;Child :list=<span class="string">&quot;list&quot;</span> @change=<span class="string">&quot;changeCurrent&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      current: <span class="number">0</span>,</span><br><span class="line">      list: [<span class="string">&quot;红楼梦&quot;</span>, <span class="string">&quot;水浒传&quot;</span>, <span class="string">&quot;三国演义&quot;</span>, <span class="string">&quot;西游记&quot;</span>]</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">changeCurrent</span>(<span class="params">num</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//监听子组件传过来的数据</span></span><br><span class="line">      <span class="built_in">this</span>.current = num;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in list&quot;</span>&gt;</span><br><span class="line">      &lt;div @click=<span class="string">&quot;clickItem(index)&quot;</span> :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    list: &#123;</span><br><span class="line">      type: <span class="built_in">Array</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickItem</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;change&quot;</span>, index);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>优点：</p>
-<p>​    传值取值方便简洁明了</p>
-<p>缺点：</p>
-<ol>
-<li>由于数据是单向传递，如果子组件需要改变父组件的props值每次需要给子组件绑定对应的监听事件。</li>
-<li>如果父组件需要给孙组件传值，需要子组件进行转发，较为不便。</li>
-</ol>
-<h2 id="sync修饰符"><a href="#sync修饰符" class="headerlink" title=".sync修饰符"></a>.sync修饰符</h2><p>在子组件能够直接修改父组件的prop值</p>
-<p><code>vue1.x</code> 时，曾作为双向绑定功能存在，即子组件可以修改父组件中的值</p>
-<p><code>vue2.0</code>时，违反了单向数据流的设计理念–删除</p>
-<p><code>vue2.3.0+</code>是，重新引入，作为一个编译时的语法糖存在—它会被扩展为一个自动更新父组件属性的<code>v-on</code>监听器。说白了就是手动进行更新父组件中的值了，从而使数据改动来源更加的明显。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child :msg.sync=<span class="string">&quot;msg&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span>&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;way2&quot;</span>,</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      msg: <span class="string">&quot;hello every guys&quot;</span>,</span><br><span class="line">      num: <span class="number">0</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>在Child组件传值时给每个值添加一个.sync修饰，在编译时会被扩展为如下代码：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;Child :msg=<span class="string">&quot;msg&quot;</span> @update.msg=<span class="string">&quot;val =&gt; msg = val&quot;</span> :num.sync=<span class="string">&quot;num&quot;</span> @update.num=<span class="string">&quot;val =&gt; num = val&quot;</span>&gt;&lt;/Child&gt;</span><br></pre></td></tr></table></figure>
-
-<p>因此子组件中只需要显示的触发update的更新事件：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickRevert&quot;</span>&gt;点击更新字符串：&#123;&#123; msg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;当前值：&#123;&#123; num &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;add&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;+&lt;/div&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickOpt(&#x27;sub&#x27;)&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;opt&quot;</span>&gt;-&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    msg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    num: &#123;</span><br><span class="line">      type: <span class="built_in">Number</span>,</span><br><span class="line">      <span class="keyword">default</span>: <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickRevert</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; msg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:msg&quot;</span>,msg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>));</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">clickOpt</span>(<span class="params">type = <span class="string">&quot;&quot;</span></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; num &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="keyword">if</span> (type == <span class="string">&quot;add&quot;</span>) &#123;</span><br><span class="line">        num++;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        num--;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">this</span>.$emit(<span class="string">&quot;update:num&quot;</span>, num);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>和<code>v-model</code>同理，v-model本质上也是一种语法糖，只不过它触发的不是update方法而是input方法；而且v-model没有.sync来的更加灵活，v-model只能绑定一个值</p>
-<h2 id="attrs和-listeners"><a href="#attrs和-listeners" class="headerlink" title="$attrs和$listeners"></a>$attrs和$listeners</h2><p>当从A到C的跨级通信时，prop传值会非常麻烦，会有很多冗余繁琐的转发操作；如果C中的状态改变还需要传递给A，使用事件还需要一级一级的向上传递，代码可读性就更差了。</p>
-<p><img src="/article/attrs.jpg"></p>
-<p>解决方案 ：<code>vue2.4+</code>版本提供了新的方案：<code>$attrs和$listeners</code>，</p>
-<blockquote>
-<p>`$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 (class 和 style 除外)，并且可以通过 v-bind=”$attrs” 传入内部组件——在创建高级别的组件时非常有用。</p>
-</blockquote>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child</span><br><span class="line">      :notUse=<span class="string">&quot;&#x27;not-use&#x27;&quot;</span> <span class="comment">// 没用的信息</span></span><br><span class="line">      :childMsg=<span class="string">&quot;childMsg&quot;</span>  <span class="comment">// 传给子组件的信息</span></span><br><span class="line">      :grandChildMsg=<span class="string">&quot;grandChildMsg&quot;</span>  <span class="comment">//传给孙组件的信息</span></span><br><span class="line">      @onChildMsg=<span class="string">&quot;onChildMsg&quot;</span>  <span class="comment">// 子组件function</span></span><br><span class="line">      @onGrandChildMsg=<span class="string">&quot;onGrandChildMsg&quot;</span>  <span class="comment">//孙组件function</span></span><br><span class="line">    &gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childMsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandChildMsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">onChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childMsg = msg;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">onGrandChildMsg</span>(<span class="params">msg</span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.grandChildMsg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div @click=<span class="string">&quot;clickMsg&quot;</span>&gt;&#123;&#123; childMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;$attrs: &#123;&#123; $attrs &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild v-bind=<span class="string">&quot;$attrs&quot;</span> v-on=<span class="string">&quot;$listeners&quot;</span>&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    childMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; childMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">          <span class="string">&quot;onChildMsg&quot;</span>,</span><br><span class="line">          childMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  components: &#123; GrandChild &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>在子组件中，通过props获取子组件所需要的参数，即childMsg；</p>
-<p>剩余的参数就被归到了<code>$attrs</code>对象中，然后把它继续往孙组件中传；同时把所有的监听函数归到$listeners，也继续往下传。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box1&quot;</span> @click=<span class="string">&quot;clickMsg&quot;</span>&gt;grand-child:&#123;&#123; grandChildMsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  props: &#123;</span><br><span class="line">    grandChildMsg: &#123;</span><br><span class="line">      type: <span class="built_in">String</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickMsg</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> &#123; grandChildMsg &#125; = <span class="built_in">this</span>;</span><br><span class="line">      <span class="built_in">this</span>.$emit(</span><br><span class="line">        <span class="string">&quot;onGrandChildMsg&quot;</span>,</span><br><span class="line">        grandChildMsg.split(<span class="string">&quot;&quot;</span>).reverse().join(<span class="string">&quot;&quot;</span>)</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>总结：$attrs和$listeners很好的解决了<code>跨一级</code>组件传值的问题。但是不适合做多级组件的传值问题</p>
-<h2 id="provide和inject"><a href="#provide和inject" class="headerlink" title="provide和inject"></a>provide和inject</h2><p>用来做多级组件数据的传值</p>
-<p>provide/inject是<code>vue2.2+</code>版本新增的属性，简单来说就是父组件中通过provide来提供变量, 然后再子组件中通过inject来注入变量。这里inject注入的变量不像<code>$attrs</code>，只能向下一层；inject不论子组件嵌套有多深，都能获取到。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Child&gt;&lt;/Child&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child <span class="keyword">from</span> <span class="string">&quot;./child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123; Child &#125;,</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="string">&quot;hello child&quot;</span>,</span><br><span class="line">      grandmsg: <span class="string">&quot;hello grand child&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">    <span class="comment">//提供变量</span></span><br><span class="line">  <span class="function"><span class="title">provide</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      childmsg: <span class="built_in">this</span>.childmsg,</span><br><span class="line">      grandmsg: <span class="built_in">this</span>.grandmsg</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.childmsg = <span class="string">&quot;hello new child&quot;</span>;</span><br><span class="line">      <span class="built_in">this</span>.grandmsg = <span class="string">&quot;hello new grand child&quot;</span>;</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;GrandChild&gt;&lt;/GrandChild&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> GrandChild <span class="keyword">from</span> <span class="string">&quot;./grand-child&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">  components: &#123; GrandChild &#125;,</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//grand-child.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;div&gt;child-msg:&#123;&#123; childmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;div&gt;grand-msg:&#123;&#123; grandmsg &#125;&#125;&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">&quot;GrandChild&quot;</span>,</span><br><span class="line">  inject: [<span class="string">&quot;childmsg&quot;</span>, <span class="string">&quot;grandmsg&quot;</span>],</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p><strong>注意</strong>：</p>
-<p>​    1.一旦子组件注入了某个数据，在data中就不能再声明这个数据了</p>
-<p>​    2.<code>provide</code> 和 <code>inject</code> 绑定并不是可响应的。这是刻意为之的。然而，如果你传入了一个可监听的对象，那么其对象的属性还是可响应的</p>
-<h2 id="EventBus-—兄弟间组件通行"><a href="#EventBus-—兄弟间组件通行" class="headerlink" title="EventBus —兄弟间组件通行"></a>EventBus —兄弟间组件通行</h2><p>实际上是创建一个vue实例，通过一个空的vue实例作为桥梁实现vue组件间的通信。它是实现非父子组件通信的一种解决方案，所有的组件都可以上下平行地通知其他组件，但也就是太方便所以若使用不慎，就会造成难以维护的“灾难”</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//utils/event-bus.js</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Vue();</span><br></pre></td></tr></table></figure>
-
-<p>首先创造一个空的vue对象并将其导出，他是一个不具备<code>DOM</code>的组件，它具有的仅仅只是它实例方法而已，因此它非常的轻便。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//main.js</span></span><br><span class="line"><span class="keyword">import</span> bus <span class="keyword">from</span> <span class="string">&quot;@/utils/event-bus&quot;</span>;</span><br><span class="line">Vue.prototype.$bus = bus;</span><br></pre></td></tr></table></figure>
-
-<p>将其挂载到全局，变成全局的事件总线，这样在组件中就能很方便的调用了。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Parent.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;box&quot;</span>&gt;</span><br><span class="line">    &lt;Child1&gt;&lt;/Child1&gt;</span><br><span class="line">    &lt;Child2&gt;&lt;/Child2&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">import</span> Child1 <span class="keyword">from</span> <span class="string">&quot;./child1&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> Child2 <span class="keyword">from</span> <span class="string">&quot;./child2&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  components: &#123;</span><br><span class="line">    Child1,</span><br><span class="line">    Child2</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>实现兄弟组件间的通信</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//child1.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg1&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg2&quot;</span>, <span class="string">&quot;hello from1:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"><span class="comment">//child2.vue</span></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;send&quot;</span> @click=<span class="string">&quot;clickSend&quot;</span>&gt;发送消息&lt;/div&gt;</span><br><span class="line">    &lt;template v-<span class="keyword">for</span>=<span class="string">&quot;(item, index) in msgList&quot;</span>&gt;</span><br><span class="line">      &lt;div :key=<span class="string">&quot;index&quot;</span>&gt;&#123;&#123; item &#125;&#125;&lt;/div&gt;</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">msgList</span>: [] &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$bus.$on(<span class="string">&quot;getMsg2&quot;</span>, <span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.msgList.push(res);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    <span class="function"><span class="title">clickSend</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.$bus.$emit(<span class="string">&quot;getMsg1&quot;</span>, <span class="string">&quot;hello from2:&quot;</span> + <span class="built_in">parseInt</span>(<span class="built_in">Math</span>.random() * <span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用不善，EventBus会是一种灾难，到底是什么样的“灾难”了？大家都知道vue是单页应用，如果你在某一个页面刷新了之后，与之相关的EventBus会被移除，这样就导致业务走不下去。还要就是如果业务有反复操作的页面，EventBus在监听的时候就会触发很多次，也是一个非常大的隐患。这时候我们就需要好好处理EventBus在项目中的关系。通常会用到，在页面或组件销毁时，同时移除EventBus事件监听。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>&#123;</span><br><span class="line">    <span class="function"><span class="title">destroyed</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        $EventBus.$off(<span class="string">&#x27;event-name&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>总结：EventBus可以用来很方便的实现兄弟组件和跨级组件的通信，但是使用不当时也会带来很多问题；所以适合逻辑并不复杂的小页面，逻辑复杂时还是建议使用vuex。</p>
-<p>原文来源：<a href="https://zhuanlan.zhihu.com/p/119350263">Vue中组件通信的方式</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Vue</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Vue面试题</title>
-    <url>/article/a424f2dd.html</url>
+    <url>/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
     <content><![CDATA[<span id="more"></span>        
 
 <h1 id="vue、react、angular三者有什么区别？"><a href="#vue、react、angular三者有什么区别？" class="headerlink" title="vue、react、angular三者有什么区别？"></a>vue、react、angular三者有什么区别？</h1><p>vue.js通过简单的API（应用程序编程接口）提供高效的数据绑定和灵活的组件系统。</p>
@@ -1385,7 +1385,7 @@
 <li>模型（Model）：数据保存</li>
 </ul>
 <p>通信方式：</p>
-<p>​    <img src="/article/MVC.png" alt="MVC模式"></p>
+<p>​    <img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/MVC.png" alt="MVC模式"></p>
 <ol>
 <li>View 传送指令到 Controller</li>
 <li>Controller 完成业务逻辑后，要求 Model 改变状态</li>
@@ -1396,7 +1396,7 @@
 <p>（1）通过 View 接受指令，传递给 Controller。</p>
 <p>（2）直接通过controller接受指令。</p>
 <h3 id="2）MVP"><a href="#2）MVP" class="headerlink" title="2）MVP"></a>2）MVP</h3><p>MVP 模式将 Controller 改名为 Presenter，同时改变了通信方向。</p>
-<p><img src="/article/MVP.png" alt="MVP模式"></p>
+<p><img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/MVP.png" alt="MVP模式"></p>
 <ul>
 <li>各部分之间的通信，都是双向的。</li>
 <li>View 与 Model 不发生联系，都通过 Presenter 传递。</li>
@@ -1541,14 +1541,14 @@
 <li><p>view，以声明方式将 state 映射到视图；</p>
 </li>
 <li><p>actions，响应在 view 上的用户输入导致的状态变化。下图单向数据流示意图：</p>
-<img src="/article/flow.png" alt="flow" style="zoom:30%;">
+<img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/flow.png" alt="flow" style="zoom:30%;">
 
 <p>vuex，多组件共享状态，因-单向数据流简洁性很容易被破坏：</p>
 <ul>
 <li>多个视图依赖于同一状态。</li>
 <li>来自不同视图的行为需要变更同一状态。</li>
 </ul>
-<p><img src="/article/vuex.png" alt="vuex"></p>
+<p><img src="/2021/03/15/Vue%E9%9D%A2%E8%AF%95%E9%A2%98/vuex.png" alt="vuex"></p>
 </li>
 </ul>
 ]]></content>
