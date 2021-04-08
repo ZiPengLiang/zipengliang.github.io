@@ -1,9 +1,10 @@
 ---
 title: vue兼容IE
-date: 2021-03-05 11:46:14
-tags: 
- - Vue
+tags:
+  - Vue
 categories: 技术
+abbrlink: a7903c60
+date: 2021-03-05 11:46:14
 ---
 
 > ​	背景：由于Vue中使用了ES6语法，因此低版本的IE浏览器是不兼容IE的，在vue不做适配的情况下，vue所生成的网页用IE浏览器中打开只会出现一片空白，因此要用到使用**babel-polyfill**转换成ES5

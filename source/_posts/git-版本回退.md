@@ -1,9 +1,10 @@
 ---
 title: git-版本回退
-date: 2021-03-02 16:06:55
 tags:
- - Git
+  - Git
 categories: 技术
+abbrlink: a26dc950
+date: 2021-03-02 16:06:55
 ---
 
 当多次提交提交的时候，当发现提交错误时，需要版本回退

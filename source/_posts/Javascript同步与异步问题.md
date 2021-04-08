@@ -1,9 +1,10 @@
 ---
 title: Javascript同步与异步问题
-date: 2021-02-24 16:36:20
-tags: 
- - javascript
+tags:
+  - javascript
 categories: 技术
+abbrlink: bcf7e3df
+date: 2021-02-24 16:36:20
 ---
 
 > 在javascript中大部分程序都是顺序执行的，即只有一个函数执行完后才会，但有时候某些程序运行时间过长，导致之后的程序也不能执行，这就是所谓的阻塞。为了解决这种情况，异步编程就出现了

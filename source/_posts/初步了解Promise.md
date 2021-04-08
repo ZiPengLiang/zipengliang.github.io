@@ -1,10 +1,11 @@
 ---
 title: 初步了解Promise
-date: 2021-02-24 16:06:13
-tags: 
- - javascript
- - Promise
+tags:
+  - javascript
+  - Promise
 categories: 技术
+abbrlink: f3d1af61
+date: 2021-02-24 16:06:13
 ---
 
 > ​	Promise是一个对象，用于表示一个异步请求操作的最终结果（不管是成功和失败），并将其结果值返回出去，在当前的javascript程序中，promise用法众多，是一种十分流行的异步编程方式

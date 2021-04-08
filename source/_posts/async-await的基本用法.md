@@ -1,9 +1,10 @@
 ---
 title: async/await的基本用法
-date: 2021-02-24 16:52:23
-tags: 
- - javascript
+tags:
+  - javascript
 categories: 技术
+abbrlink: 850a53f3
+date: 2021-02-24 16:52:23
 ---
 
 

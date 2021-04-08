@@ -1,9 +1,10 @@
 ---
 title: vue-cl3搭建项目
-date: 2021-02-25 16:41:48
-tags: 
- - Vue
+tags:
+  - Vue
 categories: 技术
+abbrlink: 8a4f8add
+date: 2021-02-25 16:41:48
 ---
 
 

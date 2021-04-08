@@ -1,9 +1,10 @@
 ---
 title: vue响应式原理v2.0与v3.0的区别
-date: 2021-03-02 15:30:28
-tags: 
- - Vue
+tags:
+  - Vue
 categories: 技术
+abbrlink: 3b5b1403
+date: 2021-03-02 15:30:28
 ---
 
 # 深入响应性原理

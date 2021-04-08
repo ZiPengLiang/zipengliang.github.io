@@ -1,9 +1,10 @@
 ---
 title: git-工作区和暂存区
-date: 2021-03-02 16:17:29
-tags: 
- - Git
+tags:
+  - Git
 categories: 技术
+abbrlink: d0f75f48
+date: 2021-03-02 16:17:29
 ---
 
 

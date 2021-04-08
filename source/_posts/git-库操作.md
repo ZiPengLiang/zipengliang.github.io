@@ -1,9 +1,10 @@
 ---
 title: git-库操作
-date: 2021-03-02 16:11:24
-tags: 
- - Git
+tags:
+  - Git
 categories: 技术
+abbrlink: 9b51bb39
+date: 2021-03-02 16:11:24
 ---
 
 ### 创建版本库

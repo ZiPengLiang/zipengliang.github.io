@@ -1,9 +1,10 @@
 ---
 title: git-分支操作
-date: 2021-03-02 16:14:08
-tags: 
- - Git
+tags:
+  - Git
 categories: 技术
+abbrlink: f165ff28
+date: 2021-03-02 16:14:08
 ---
 
 ### 创建与合并分支

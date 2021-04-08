@@ -1,9 +1,10 @@
 ---
 title: vue3.0知识点
-date: 2021-03-02 15:23:51
-tags: 
- - Vue
+tags:
+  - Vue
 categories: 技术
+abbrlink: 3b5882fc
+date: 2021-03-02 15:23:51
 ---
 
 ## 1.手脚架

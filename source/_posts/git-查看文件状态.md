@@ -1,9 +1,10 @@
 ---
 title: git-查看文件状态
-date: 2021-03-02 16:09:44
-tags: 
- - Git
+tags:
+  - Git
 categories: 技术
+abbrlink: 3dfaaaba
+date: 2021-03-02 16:09:44
 ---
 
 运行`git status`命令看看结果

@@ -1,9 +1,10 @@
 ---
 title: vue-config-js配置参考
-date: 2021-03-01 16:27:50
-tags: 
- - Vue
+tags:
+  - Vue
 categories: 技术
+abbrlink: c0e48dbf
+date: 2021-03-01 16:27:50
 ---
 
 > **vue-cli3 脚手架搭建完成后，项目目录中没有 vue.config.js 文件，需要手动创建**

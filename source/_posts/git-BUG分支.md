@@ -1,9 +1,10 @@
 ---
 title: git-BUG分支
-date: 2021-03-02 16:23:34
-tags: 
- - Git
+tags:
+  - Git
 categories: 技术
+abbrlink: a05f3d28
+date: 2021-03-02 16:23:34
 ---
 
 # BUG分支
