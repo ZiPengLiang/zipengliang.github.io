@@ -1559,4 +1559,307 @@
         <tag>Vue</tag>
       </tags>
   </entry>
+  <entry>
+    <title>浏览器中的多进程与多线程</title>
+    <url>/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9A%84%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="一-进程与线程"><a href="#一-进程与线程" class="headerlink" title="一.进程与线程"></a>一.进程与线程</h2><h3 id="1-什么是进程和线程"><a href="#1-什么是进程和线程" class="headerlink" title="1.什么是进程和线程"></a><strong>1.什么是进程和线程</strong></h3><p><strong>进程</strong>是CPU资源分配的最小单位（是能拥有资源和独立运行的最小单位），在一定的环境下，把静态的程序代码运行起来，通过使用不同的资源，来完成一定的任务。</p>
+<p><strong>线程</strong>是CPU调度的最小单位（线程是建立在进程的基础上的一次程序运行单位，一个进程中可以有多个线程，个进程中的线程可以互相通信，共享内存等资源，不同进程之间也可以通信，不过代价较大。）</p>
+<span id="more"></span>
+
+<p>举个例子：</p>
+<ul>
+<li>假如进程是一个工厂，工厂有它的独立的资源</li>
+<li>工厂之间相互独立</li>
+<li>线程是工厂中的工人，多个工人协作完成任务</li>
+<li>工厂内有一个或多个工人</li>
+<li>工人之间共享空间</li>
+</ul>
+<p>再完善完善概念：</p>
+<ul>
+<li>工厂的资源 -&gt; 系统分配的内存（独立的一块内存）</li>
+<li>工厂之间的相互独立 -&gt; 进程之间相互独立</li>
+<li>多个工人协作完成任务 -&gt; 多个线程在进程中协作完成任务</li>
+<li>工厂内有一个或多个工人 -&gt; 一个进程由一个或多个线程组成</li>
+<li>工人之间共享空间 -&gt; 同一进程下的各个线程之间共享程序的内存空间（包括代码段、数据集、堆等）</li>
+</ul>
+<h3 id="2-进程和线程的关系"><a href="#2-进程和线程的关系" class="headerlink" title="2.进程和线程的关系"></a><strong>2.进程和线程的关系</strong></h3><p>进程是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。或者说进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动,进程是系统进行资源分配和调度的一个独立单位。</p>
+<p>线程则是进程的一个实体,是CPU调度和分派的基本单位,它是比进程更小的能独立运行的基本单位。</p>
+<p>总结来说，进程和线程之间的关系有以下 4 个特点。</p>
+<ul>
+<li>进程中的任意一线程执行出错，都会导致整个进程的崩溃。</li>
+<li>线程之间共享进程中的数据。</li>
+<li>当一个进程关闭之后，操作系统会回收进程所占用的内存。</li>
+<li>进程之间的内容相互隔离。</li>
+</ul>
+<h3 id="3-什么是多进程和多线程？"><a href="#3-什么是多进程和多线程？" class="headerlink" title="3.什么是多进程和多线程？"></a><strong>3.什么是多进程和多线程？</strong></h3><p>多进程：多进程指同一个时间里，同一个计算机系统中如果允许两个或两个以上的进程处于运行状态。多进程带来的好处多个程序互不影响</p>
+<p>多线程是指程序中包含多个执行流，即在一个程序中可以同时运行多个不同的线程来执行不同的任务，也就是说允许单个程序创建多个并行执行的线程来完成各自的任务。</p>
+<h2 id="二-多进程浏览器"><a href="#二-多进程浏览器" class="headerlink" title="二.多进程浏览器"></a>二.多进程浏览器</h2><h3 id="1-什么是多进程浏览器"><a href="#1-什么是多进程浏览器" class="headerlink" title="1.什么是多进程浏览器"></a><strong>1.什么是多进程浏览器</strong></h3><p>多进程浏览器使用多个进程来隔离不同的网页。因此在多进程浏览器中打开一个网页相当于起了一个进程，如在某一浏览器中打开一个tab页，就是一个进程。</p>
+<h3 id="2-为什么要使用多进程架构"><a href="#2-为什么要使用多进程架构" class="headerlink" title="2.为什么要使用多进程架构?"></a><strong>2.为什么要使用多进程架构?</strong></h3><p>根本考虑：性能和安全</p>
+<p>防止病毒攻击网站中的一个进程导致整个网站奔溃。</p>
+<p>相比线程：多进程不共享资源和地址空间，不会有太多的安全问题，线程共享资源和地址，因此可能会受到恶意攻击</p>
+<p><strong>多进程浏览器内存等资源消耗也会更大，有点空间换时间的意思。</strong></p>
+<h3 id="3-多进程浏览器的多进程有哪些？"><a href="#3-多进程浏览器的多进程有哪些？" class="headerlink" title="3.多进程浏览器的多进程有哪些？"></a><strong>3.多进程浏览器的多进程有哪些？</strong></h3><ul>
+<li>浏览器进程：浏览器的主进程（负责协调，主控）</li>
+<li>插件进程：每种类型的插件对应一个进程，仅当使用该插件时才创建</li>
+<li>GPU进程：最多一个，用于3D绘制</li>
+<li><strong>浏览器渲染进程（内核）</strong>：默认每个Tab页面一个进程，互不影响，控制页面渲染，脚本执行，事件处理等（有时候会优化，如多个空白tab会合并成一个进程）</li>
+</ul>
+<h3 id="4-多进程浏览器的优点？"><a href="#4-多进程浏览器的优点？" class="headerlink" title="4.多进程浏览器的优点？"></a><strong>4.多进程浏览器的优点？</strong></h3><ul>
+<li>避免页面渲染影响整个浏览器</li>
+<li>避免第三方插件影响整个浏览器</li>
+<li>多进程充分利用多核优势</li>
+<li>方便使用沙盒模型隔离插件等进程，提高浏览器稳定性</li>
+</ul>
+<h2 id="三-多线程浏览器"><a href="#三-多线程浏览器" class="headerlink" title="三.多线程浏览器"></a>三.多线程浏览器</h2><h3 id="1-浏览器内核是多线程"><a href="#1-浏览器内核是多线程" class="headerlink" title="1.浏览器内核是多线程"></a><strong>1.浏览器内核是多线程</strong></h3><p>浏览器内核是多线程，在内核控制下各线程相互配合以保持同步，一个浏览器通常由以下常驻线程组成：</p>
+<ul>
+<li>GUI 渲染线程</li>
+<li>JavaScript引擎线程</li>
+<li>定时触发器线程</li>
+<li>事件触发线程</li>
+<li>异步http请求线程</li>
+</ul>
+<h4 id="JavaScript引擎线程"><a href="#JavaScript引擎线程" class="headerlink" title="JavaScript引擎线程"></a><strong>JavaScript引擎线程</strong></h4><p>负责处理JavaScript脚本程序</p>
+<p>javascript引擎是基于事件驱动单线程执行的，JS引擎一直等待着任务队列中任务的到来，然后加以处理，浏览器无论什么时候都只有一个JS线程在运行JS程序</p>
+<h4 id="GUI渲染线程"><a href="#GUI渲染线程" class="headerlink" title="GUI渲染线程"></a>GUI渲染线程</h4><p>负责渲染浏览器界面,重绘(repaint)或回流(reflow)时,该线程就会执行。</p>
+<p>与javascript引擎线程是互斥，js引擎执行时,GUI线程就会被挂起,GUI更新会被保存在一个队列中,等待js引擎空闲时立即被执行。</p>
+<p>特殊情况是整个html渲染时的生命周期,会通过全局事件如DOMContentLoaded,onresize进行描述</p>
+<h4 id="事件触发线程"><a href="#事件触发线程" class="headerlink" title="事件触发线程"></a>事件触发线程</h4><p>事件触发线程，当一个事件被触发时,该线程会把事件添加到待处理队列的队尾，等待JS引擎的处理。</p>
+<p>这些事件可来自JavaScript引擎当前执行的代码块如setTimeOut、也可来自浏览器内核的其他线程如鼠标点击、AJAX异步请求等，但由于JS的单线程关系所有这些事件都得排队等待JS引擎处理。</p>
+<h4 id="定时触发器线程"><a href="#定时触发器线程" class="headerlink" title="定时触发器线程"></a><strong>定时触发器线程</strong></h4><p>传说中的setInterval与setTimeout所在线程, 计数线程，浏览器定时计数器并不是由JS引擎计数的</p>
+<h4 id="异步http请求线程"><a href="#异步http请求线程" class="headerlink" title="异步http请求线程"></a><strong>异步http请求线程</strong></h4><p>XMLHttpRequest在连接后是通过浏览器新开的一个线程请求。当检测到状态更新时，如果没有设置回调函数，异步线程就产生状态 变更事件，将这个回调再放入事件队列中，等待JS引擎执行。</p>
+<h3 id="2-浏览器内核中线程之间的关系"><a href="#2-浏览器内核中线程之间的关系" class="headerlink" title="2.浏览器内核中线程之间的关系"></a><strong>2.浏览器内核中线程之间的关系</strong></h3><h4 id="a-GUI渲染线程与JavaScript引擎线程互斥！"><a href="#a-GUI渲染线程与JavaScript引擎线程互斥！" class="headerlink" title="a.GUI渲染线程与JavaScript引擎线程互斥！"></a><strong>a.GUI渲染线程与JavaScript引擎线程互斥！</strong></h4><p>由于JavaScript是可操纵DOM的，如果在修改这些元素属性同时渲染界面（即JavaScript线程和UI线程同时运行），那么渲染线程前后获得的元素数据就可能不一致了。</p>
+<p>因此为了防止渲染出现不可预期的结果，浏览器设置GUI渲染线程与JavaScript引擎为互斥的关系，当JavaScript引擎执行时GUI线程会被挂起，GUI更新会被保存在一个队列中等到引擎线程空闲时立即被执行。</p>
+<h4 id="b-JS阻塞页面加载"><a href="#b-JS阻塞页面加载" class="headerlink" title="b.JS阻塞页面加载"></a><strong>b.JS阻塞页面加载</strong></h4><p>由于GUI渲染线程与JavaScript执行线程是互斥的关系，当浏览器在执行JavaScript程序的时候，GUI渲染线程会被保存在一个队列中，直到JS程序执行完成，才会接着执行。</p>
+<p>因此如果JS执行的时间过长，这样就会造成页面的渲染不连贯，导致页面渲染加载阻塞的感觉。</p>
+<h3 id="c-JS引擎线程与事件触发线程、定时触发器线程、异步HTTP请求线程"><a href="#c-JS引擎线程与事件触发线程、定时触发器线程、异步HTTP请求线程" class="headerlink" title="c.JS引擎线程与事件触发线程、定时触发器线程、异步HTTP请求线程"></a>c.JS引擎线程与事件触发线程、定时触发器线程、异步HTTP请求线程</h3><p>事件触发线程、定时触发器线程、异步HTTP请求线程三个线程有一个共同点，那就是使用回调函数的形式，当满足了特定的条件，这些回调函数会被执行。</p>
+<p>这些回调函数被浏览器内核理解成事件，在浏览器内核中拥有一个事件队列，这三个线程当满足了内部特定的条件，会将这些回调函数添加到事件队列中，等待JS引擎空闲执行。</p>
+<p>例如异步HTTP请求线程，线程如果检测到请求的状态变更，如果设置有回调函数，回调函数会被添加事件队列中，等待JS引擎空闲了执行。</p>
+<p>但是，JS引擎对事件队列（宏任务）与JS引擎内的任务（微任务）执行存在着先后循序，当每执行完一个事件队列的时间，JS引擎会检测内部是否有未执行的任务，如果有，将会优先执行（微任务）。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>浏览器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器内核原理</title>
+    <url>/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h2 id="浏览器结构"><a href="#浏览器结构" class="headerlink" title="浏览器结构"></a><strong>浏览器结构</strong></h2><ul>
+<li><strong>用户界面（UI）</strong>：包括菜单栏、工具栏、地址栏、后退/前进按钮、书签目录等，也就是能看到的除了显示页面的主窗口之外的部分；</li>
+<li><strong>浏览器引擎（Rendering engine）</strong>：也被称为浏览器内核、渲染引擎，主要负责取得页面内容、整理信息（应用CSS）、计算页面的显示方式，然后会输出到显示器或者打印机；</li>
+<li><strong>JS解释器</strong>：也可以称为JS内核，主要负责处理javascript脚本程序，一般都会附带在浏览器之中，例如chrome的V8引擎；</li>
+<li><strong>网络部分</strong>：主要用于网络调用，例如：HTTP请求，其接口与平台无关，并为所有的平台提供底层实现；</li>
+<li><strong>UI后端</strong>：用于绘制基本的窗口部件，比如组合框和窗口等；</li>
+<li><strong>数据存储</strong>：保存类似于cookie、storage等数据部分，HTML5新增了web database技术，一种完整的轻量级客户端存储技术。</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="浏览器内核定义"><a href="#浏览器内核定义" class="headerlink" title="浏览器内核定义"></a>浏览器内核定义</h2><p>浏览器内核英文叫做：Rendering Engine，中文翻译很多，排版引擎、解释引擎、渲染引擎，现在流行称为浏览器内核。内核可以分成两部分：渲染引擎（layout engineer）或（Rendering Engine）和 JS 引擎。</p>
+<h3 id="1-什么是渲染引擎？"><a href="#1-什么是渲染引擎？" class="headerlink" title="1.什么是渲染引擎？"></a><strong>1.什么是渲染引擎</strong>？</h3><p>渲染引擎是一种对HTML文档进行解析并将其显示在页面上的工具。</p>
+<p>它负责取得网页的内容（HTML、XML、图像等等）、整理讯息（例如加入CSS等），以及计算网页的显示方式，然后会输出至显示器或打印机。</p>
+<p>所有网页浏览器、电子邮件客户端以及其它需要编辑、显示网络内容的应用程序都需要渲染引擎。</p>
+<p>在Mozilla将其渲染引擎（Gecko）作为独立于浏览器的一个配件之后，“渲染引擎”这个词汇才被广泛使用。也就是说，除了Mozilla浏览器，其它浏览器也可以使用Gecko作自己渲染引擎。IE的渲染引擎被称为Trident，被用在许多Windows的应用程式上。</p>
+<h3 id="2-什么是JavaScript引擎？"><a href="#2-什么是JavaScript引擎？" class="headerlink" title="2.什么是JavaScript引擎？"></a><strong>2.什么是JavaScript引擎？</strong></h3><p>JavaScript引擎就是能够提供执行JavaScript代码的运行环境</p>
+<p>JavaScript引擎包括以下部分：</p>
+<blockquote>
+<p>第一， 编译器。主要工作是将源代码编译成抽象语法树，然后在某些引擎中还包含将抽象语法树转换成字节码。</p>
+<p>第二， 解释器。在某些引擎中，解释器主要是接受字节码，解释执行这个字节码，然后也依赖来及回收机制等。</p>
+<p>第三， JIT工具。一个能够能够JIT的工具，将字节码或者抽象语法树转换成本地代码，当然它也需要依赖牢记</p>
+<p>第四， 垃圾回收器和分析工具（profiler）。它们负责垃圾回收和收集引擎中的信息，帮助改善引擎的性能和功效。</p>
+</blockquote>
+<h3 id="3-渲染引擎和JavaScript引擎之间的关系"><a href="#3-渲染引擎和JavaScript引擎之间的关系" class="headerlink" title="3. 渲染引擎和JavaScript引擎之间的关系"></a><strong>3. 渲染引擎和JavaScript引擎之间的关系</strong></h3><p>在网页的工作过程需要使用渲染引擎和JavaScript引擎。从模块上看，它们是两个独立的模块，分别负责完成不同的任务：</p>
+<blockquote>
+<p>JavaScript引擎负责解析执行JavaScript代码，而渲染引擎负责渲染网页页面。</p>
+<p>JavaScript引擎提供调用接口被渲染引擎使用，渲染引擎使用JavaScript引擎来处理JavaScript代码并获取结果。</p>
+<p>JavaScript引擎需要能够访问渲染引擎构建的DOM树，JavaScript引擎需要提供桥接的接口，渲染引擎则根据桥接接口来提供让JavaScript访问DOM的能力。</p>
+</blockquote>
+<p>在HTML5的能力中，很多是通过JavaScript接口提供给开发者的，所以这部分同样需要根据桥接接口来实现具体类，以便让 JavaScript引擎能够回调渲染引擎的具体实现。</p>
+<p>*<em>注：**</em>IE浏览器只为每个浏览器窗口启用单独的进程，而chrome浏览器却为每个tab页面启用单独的进程*，也就是说每个tab都有独立的渲染引擎实例。</p>
+<h3 id="4-浏览器渲染过程"><a href="#4-浏览器渲染过程" class="headerlink" title="4.浏览器渲染过程"></a><strong>4.浏览器渲染过程</strong></h3><p>浏览器渲染大体上分为以下五步</p>
+<blockquote>
+<p>A.处理html生成 DOM（Document Object Model）Tree</p>
+<p>B.处理css生成 CSSOM（CSS Object Model）Tree</p>
+<p>C.DOM树与CSS-DOM树合并为Render树</p>
+<p>D.对Render树进行布局计算</p>
+<p>E.遍历Render树的每一个节点绘制到屏幕</p>
+</blockquote>
+<h4 id="A-DOM树生成"><a href="#A-DOM树生成" class="headerlink" title="A.DOM树生成"></a><strong>A.DOM树生成</strong></h4><p>将html代码转换为一个DOM树</p>
+<p>注意：html文档中的每一个tag标签都是一个DOM树的节点（文本节点也是） ；DOM树的根节点就是document对象 ；js动态生成的DOM节点也在DOM树上</p>
+<h4 id="B-CSSOM树生成"><a href="#B-CSSOM树生成" class="headerlink" title="B.CSSOM树生成"></a><strong>B.CSSOM树生成</strong></h4><p>浏览器把所有的样式解析为样式结构体 （包括css样式和浏览器默认样式，当然浏览器识别不了的样式不能解析 ）<br>最后生成了CSSOM树</p>
+<h4 id="C-Render树生成"><a href="#C-Render树生成" class="headerlink" title="C.Render树生成"></a><strong>C.Render树生成</strong></h4><p>Render树叫渲染树 ，它是由DOM树和CSSOM树合成的</p>
+<p>渲染树的每一个节点都有自己的style样式 ，渲染树上没有隐藏的节点，比如display：block和无样式head节点 ，因为这些节点不会呈现也不影响呈现</p>
+<p>注意：visibility:hidden会存在渲染树，因为它占有空间，会影响布局</p>
+<h4 id="D-布局计算"><a href="#D-布局计算" class="headerlink" title="D.布局计算"></a><strong>D.布局计算</strong></h4><p>根据Render树的样式计算布局 ，输出的结果称为box盒模型（width,height,margin,padding,border,left,top,…）</p>
+<p>盒模型精确表示了每一个元素的位置和大小 ，所有相对度量单位都转化为了绝对单位</p>
+<h4 id="E-绘制"><a href="#E-绘制" class="headerlink" title="E.绘制"></a><strong>E.绘制</strong></h4><p>最后将信息渲染到屏幕中每一个真实的像素点 ，这个过程叫绘制或者rasterizing格栅化</p>
+<h3 id="5-浏览器内核分类："><a href="#5-浏览器内核分类：" class="headerlink" title="5.浏览器内核分类："></a>5.浏览器内核分类：</h3><ul>
+<li><p><strong>Trident(IE 内核)：</strong></p>
+<p>​    1997年 –IE4首次采用 ，微软 基于Mosaic代码修改而来</p>
+<p>​    一款开放的内核，核心内核相当成熟    </p>
+</li>
+<li><p><strong>Gecko(Firefox 内核):</strong> </p>
+<p>​    Netscape6（网景）/FireFox (火狐浏览器)  采用该内核</p>
+<p>​    特点：代码完全公开。其可开发程度很高，全世界的程序员都可以为其编写代码，增加功能。</p>
+</li>
+<li><p><strong>Presto(Opera 前内核)(已废弃):</strong> </p>
+<p>​    Opera12.17及更老版本使用的内核（废弃）</p>
+<p>​    特点：渲染速度的优化达到了极致</p>
+<p>​    缺点：牺牲了网页的兼容性</p>
+<p>​    Opera 现在采用的是 Webkit 内核，并已宣布最终会转向谷歌的 Blink 内核。</p>
+</li>
+<li><p><strong>Webkit(Safari 内核,Chrome 内核原型,开源):</strong> </p>
+<p>​    苹果公司的内核，苹果的 Safari 浏览器使用的内核。</p>
+<p>​    Webkit 引擎包含 WebCore 排版引擎及 JavaScriptCore 解析引擎，均是从 KDE 的 KHTML 及 KJS 引擎衍生而来。</p>
+</li>
+<li><p><strong>Blink（谷歌开发，并正在不断完善）:</strong></p>
+<p>​     Google（主导） 和 Opera（参与） 开发的浏览器排版引擎</p>
+<pre><code> 这一渲染引擎是开源引擎 WebKit 中 WebCore 组件的一个分支，Chrome（28 及往后版本）、Opera（15 及往后版本）和 Yandex 浏览器中使用
+</code></pre>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>浏览器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器的缓存机制</title>
+    <url>/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>缓存–性能优化中简单高效的一种优化方式</p>
+<p>优秀的缓存策略作用：</p>
+<ul>
+<li>缩短网页请求资源的距离，减少延迟</li>
+<li>缓存文件可以重复利用，减少带宽，降低网络负荷。</li>
+</ul>
+<p>数据请求步骤：网络请求、后端处理、浏览器响应</p>
+<span id="more"></span>
+
+<img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/浏览器缓存机制.webp" style="zoom:200%;">
+
+
+
+<h2 id="二、缓存位置"><a href="#二、缓存位置" class="headerlink" title="二、缓存位置"></a>二、缓存位置</h2><p>从缓存位置上来说分为四种，并且各自有优先级，当依次查找缓存且都没有命中的时候，才会去请求网络。</p>
+<ul>
+<li>Service Worker</li>
+<li>Memory Cache</li>
+<li>Disk Cache</li>
+<li>Push Cache</li>
+</ul>
+<h3 id="1-Service-Worker"><a href="#1-Service-Worker" class="headerlink" title="1.Service Worker"></a>1.Service Worker</h3><p>运行在浏览器背后的独立线程，一般可以用来实现缓存功能。</p>
+<p>运行时传输协议必须为 HTTPS， Service Worker 中涉及到请求拦截，必须使用 HTTPS 协议来保障安全。</p>
+<p><strong>Service Worker 的缓存与浏览器其他内建的缓存机制不同，它可以让我们自由控制缓存哪些文件、如何匹配缓存、如何读取缓存，并且缓存是持续性的</strong>。</p>
+<p>Service Worker 实现缓存功能步骤：</p>
+<ul>
+<li>注册 Service Worker</li>
+<li>监听 install 事件</li>
+<li>缓存需要的文件，下次访问时可以通过拦截请求的方式查询是否存在缓存，存在缓存的话就直接读取缓存文件，否则就去请求数据。</li>
+</ul>
+<p>当 Service Worker 没有命中缓存的时候，我们需要去调用 fetch 函数获取数据。也就是说，如果我们没有在 Service Worker 命中缓存的话，会根据缓存查找优先级去查找数据。但是不管我们是从 Memory Cache 中还是从网络请求中获取的数据，浏览器都会显示我们是从 Service Worker 中获取的内容。</p>
+<h3 id="2-Memory-Cache"><a href="#2-Memory-Cache" class="headerlink" title="2.Memory Cache"></a>2.Memory Cache</h3><p>内存中的缓存 – 包含的是当前中页面中已经抓取到的资源,例如样式、脚本、图片等。</p>
+<p>读取内存中的数据比磁盘快,内存缓存读取高效，但持续性很短，会随着进程的释放而释放。 <strong>一旦关闭 Tab 页面，内存中的缓存也就被释放了</strong>。</p>
+<blockquote>
+<p><strong>那么既然内存缓存这么高效，我们是不是能让数据都存放在内存中呢？</strong></p>
+<p>这是不可能的。计算机中的内存一定比硬盘容量小得多，操作系统需要精打细算内存的使用，所以能让我们使用的内存必然不多。</p>
+<p>当我们访问过页面以后，再次刷新页面，可以发现很多数据都来自于内存缓存</p>
+</blockquote>
+<p>注意：<strong>内存缓存在缓存资源时并不关心返回资源的HTTP缓存头Cache-Control是什么值，同时资源的匹配也并非仅仅是对URL做匹配，还可能会对Content-Type，CORS等其他特征做校验</strong>。</p>
+<h3 id="3-Disk-Cache"><a href="#3-Disk-Cache" class="headerlink" title="3.Disk Cache"></a>3.Disk Cache</h3><p>Disk Cache –存储在硬盘中的缓存</p>
+<p>特点：读取速度慢点，存储量大，存储时间长</p>
+<p><strong>比之 Memory Cache 胜在容量和存储时效性上</strong>。</p>
+<p>在所有浏览器缓存中，Disk Cache 覆盖面基本是最大的。根据 HTTP Herder 中的字段判断资源是否需要缓存、是否能直接使用、是否过期需要重新请求</p>
+<blockquote>
+<p><strong>浏览器会把哪些文件丢进内存中？哪些丢进硬盘中？</strong></p>
+<p>关于这点，网上说法不一，不过以下观点比较靠得住：</p>
+<ul>
+<li>对于大文件来说，大概率是不存储在内存中的，反之优先</li>
+<li>当前系统内存使用率高的话，文件优先存储进硬盘</li>
+</ul>
+</blockquote>
+<h3 id="4-Push-Cache"><a href="#4-Push-Cache" class="headerlink" title="4.Push Cache"></a>4.Push Cache</h3><p>Push Cache（推送缓存）是 HTTP/2 中的内容，当以上三种缓存都没有命中时，它才会被使用</p>
+<p><strong>它只在会话（Session）中存在，一旦会话结束就被释放，并且缓存时间也很短暂</strong>，在Chrome浏览器中只有5分钟左右，同时它也并非严格执行HTTP头中的缓存指令。</p>
+<p>如果以上四种缓存都没有命中的话，那么只能发起请求来获取资源了。</p>
+<p>那么为了性能上的考虑，大部分的接口都应该选择好缓存策略，<strong>通常浏览器缓存策略分为两种：强缓存和协商缓存，并且缓存策略都是通过设置 HTTP Header 来实现的</strong>。</p>
+<h2 id="三、缓存过程分析"><a href="#三、缓存过程分析" class="headerlink" title="三、缓存过程分析"></a>三、缓存过程分析</h2><p>浏览器与服务器通信的方式为应答模式，即是：浏览器发起HTTP请求 – 服务器响应该请求</p>
+<p>缓存过程</p>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.webp" alt="缓存过程"></p>
+<p>特点：</p>
+<ul>
+<li>浏览器每次发起请求，都会先在浏览器缓存中查找该请求的结果以及缓存标识</li>
+<li>浏览器每次拿到返回的请求结果都会将该结果和缓存标识存入浏览器缓存中</li>
+</ul>
+<h2 id="四、强缓存"><a href="#四、强缓存" class="headerlink" title="四、强缓存"></a>四、强缓存</h2><p><strong>强缓存：不会向服务器发送请求，直接从缓存中读取资源。</strong></p>
+<p><strong>在chrome控制台的Network选项中可以看到该请求返回200的状态码，并且Size显示from disk cache或from memory cache。</strong></p>
+<p><strong>强缓存可以通过设置两种 HTTP Header 实现：Expires 和 Cache-Control。</strong></p>
+<h3 id="1-Expires"><a href="#1-Expires" class="headerlink" title="1.Expires"></a>1.Expires</h3><p><strong>缓存过期时间，用来指定资源到期的时间，是服务器端的具体的时间点</strong>。也就是说，Expires=max-age + 请求时间，需要和Last-modified结合使用。</p>
+<p>Expires是Web服务器响应消息头字段，在响应http请求时告诉浏览器在过期时间前浏览器可以直接从浏览器缓存取数据，而无需再次请求。</p>
+<h3 id="2-Cache-Control"><a href="#2-Cache-Control" class="headerlink" title="2.Cache-Control"></a>2.Cache-Control</h3><p>在HTTP/1.1中，Cache-Control是最重要的规则，主要用于控制网页缓存。比如当<code>Cache-Control:max-age=300</code>时，则代表在这个请求正确返回时间（浏览器也会记录下来）的5分钟内再次加载资源，就会命中强缓存。</p>
+<p>Cache-Control 可以在请求头或者响应头中设置，并且可以组合使用多种指令：</p>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/cache-control%E6%8C%87%E4%BB%A4.webp" alt="cache-control"></p>
+<h3 id="3-Expires和Cache-Control两者对比"><a href="#3-Expires和Cache-Control两者对比" class="headerlink" title="3.Expires和Cache-Control两者对比"></a>3.Expires和Cache-Control两者对比</h3><p>这两者差别不大，区别就在于 Expires 是http1.0的产物，Cache-Control是http1.1的产物，<strong>两者同时存在的话，Cache-Control优先级高于Expires</strong>；在某些不支持HTTP1.1的环境下，Expires就会发挥用处。所以Expires其实是过时的产物，现阶段它的存在只是一种兼容性的写法。</p>
+<h2 id="五、协商缓存"><a href="#五、协商缓存" class="headerlink" title="五、协商缓存"></a>五、协商缓存</h2><p><strong>协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程，主要有以下两种情况</strong>：</p>
+<ul>
+<li>协商缓存生效，返回304和Not Modified</li>
+</ul>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98%E6%88%90%E5%8A%9F.png"></p>
+<ul>
+<li>协商缓存失效，返回200和请求结果</li>
+</ul>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98%E5%A4%B1%E8%B4%A5.png"></p>
+<p>协商缓存可以通过设置两种 HTTP Header 实现：Last-Modified 和 ETag 。</p>
+<h3 id="1-Last-Modified和If-Modified-Since"><a href="#1-Last-Modified和If-Modified-Since" class="headerlink" title="1.Last-Modified和If-Modified-Since"></a>1.Last-Modified和If-Modified-Since</h3><p>浏览器在第一次访问资源时，服务器返回资源的同时，在response header中添加 Last-Modified的header，值是这个资源在服务器上的最后修改时间，浏览器接收后缓存文件和header；</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Last-Modified: Fri, 22 Jul 2016 01:47:00 GMT</span><br></pre></td></tr></table></figure>
+
+<p>浏览器下一次请求这个资源，浏览器检测到有 Last-Modified这个header，于是添加If-Modified-Since这个header，值就是Last-Modified中的值；服务器再次收到这个资源请求，会根据 If-Modified-Since 中的值与服务器中这个资源的最后修改时间对比，如果没有变化，返回304和空的响应体，直接从缓存读取，如果If-Modified-Since的时间小于服务器中这个资源的最后修改时间，说明文件有更新，于是返回新的资源文件和200</p>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/last-modified.png"></p>
+<h4 id="弊端："><a href="#弊端：" class="headerlink" title="弊端："></a>弊端：</h4><ul>
+<li>如果本地打开缓存文件，即使没有对文件进行修改，但还是会造成 Last-Modified 被修改，服务端不能命中缓存导致发送相同的资源</li>
+<li>因为 Last-Modified 只能以秒计时，如果在不可感知的时间内修改完成文件，那么服务端会认为资源还是命中了，不会返回正确的资源</li>
+</ul>
+<h3 id="2-ETag和If-None-Match"><a href="#2-ETag和If-None-Match" class="headerlink" title="2.ETag和If-None-Match"></a>2.ETag和If-None-Match</h3><p><strong>Etag是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，只要资源有变化，Etag就会重新生成</strong>。</p>
+<p>浏览器在下一次加载资源向服务器发送请求时，会将上一次返回的Etag值放到request header里的If-None-Match里，服务器只需要比较客户端传来的If-None-Match跟自己服务器上该资源的ETag是否一致，就能很好地判断资源相对客户端而言是否被修改过了。如果服务器发现ETag匹配不上，那么直接以常规GET 200回包形式将新的资源（当然也包括了新的ETag）发给客户端；如果ETag是一致的，则直接返回304知会客户端直接使用本地缓存即可。</p>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/etag.png"></p>
+<h3 id="3-两者之间对比："><a href="#3-两者之间对比：" class="headerlink" title="3.两者之间对比："></a>3.两者之间对比：</h3><ul>
+<li>首先在精确度上，Etag要优于Last-Modified。</li>
+</ul>
+<p>Last-Modified的时间单位是秒，如果某个文件在1秒内改变了多次，那么他们的Last-Modified其实并没有体现出来修改，但是Etag每次都会改变确保了精度；如果是负载均衡的服务器，各个服务器生成的Last-Modified也有可能不一致。</p>
+<ul>
+<li>第二在性能上，Etag要逊于Last-Modified，毕竟Last-Modified只需要记录时间，而Etag需要服务器通过算法来计算出一个hash值。</li>
+<li>第三在优先级上，服务器校验优先考虑Etag</li>
+</ul>
+<h2 id="六、缓存机制"><a href="#六、缓存机制" class="headerlink" title="六、缓存机制"></a>六、缓存机制</h2><p><strong>强制缓存优先于协商缓存进行</strong></p>
+<p>若强制缓存(Expires和Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存。</p>
+<p>协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，返回200，重新返回资源和缓存标识，再存入浏览器缓存中；生效则返回304，继续使用缓存</p>
+<p><img src="/2021/05/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E6%B5%81%E7%A8%8B.png"></p>
+<blockquote>
+<p><strong>如果什么缓存策略都没设置，那么浏览器会怎么处理？</strong></p>
+<p>对于这种情况，浏览器会采用一个启发式的算法，通常会取响应头中的 Date 减去 Last-Modified 值的 10% 作为缓存时间。</p>
+</blockquote>
+<h2 id="七、实际场景应用缓存策略"><a href="#七、实际场景应用缓存策略" class="headerlink" title="七、实际场景应用缓存策略"></a>七、实际场景应用缓存策略</h2><h3 id="1-频繁变动的资源"><a href="#1-频繁变动的资源" class="headerlink" title="1.频繁变动的资源"></a>1.频繁变动的资源</h3><blockquote>
+<p>Cache-Control: no-cache</p>
+</blockquote>
+<p>对于频繁变动的资源，首先需要使用<code>Cache-Control: no-cache</code> 使浏览器每次都请求服务器，然后配合 ETag 或者 Last-Modified 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。</p>
+<h3 id="2-不常变化的资源"><a href="#2-不常变化的资源" class="headerlink" title="2.不常变化的资源"></a>2.不常变化的资源</h3><blockquote>
+<p>Cache-Control: max-age=31536000</p>
+</blockquote>
+<p>通常在处理这类资源时，给它们的 Cache-Control 配置一个很大的 <code>max-age=31536000</code> (一年)，这样浏览器之后请求相同的 URL 会命中强制缓存。而为了解决更新的问题，就需要在文件名(或者路径)中添加 hash， 版本号等动态字符，之后更改动态字符，从而达到更改引用 URL 的目的，让之前的强制缓存失效 (其实并未立即失效，只是不再使用了而已)。</p>
+<h2 id="八、用户行为对浏览器缓存的影响"><a href="#八、用户行为对浏览器缓存的影响" class="headerlink" title="八、用户行为对浏览器缓存的影响"></a>八、用户行为对浏览器缓存的影响</h2><p>所谓用户行为对浏览器缓存的影响，指的就是用户在浏览器如何操作时，会触发怎样的缓存策略。主要有 3 种：</p>
+<ul>
+<li>打开网页，地址栏输入地址： 查找 disk cache 中是否有匹配。如有则使用；如没有则发送网络请求。</li>
+<li>普通刷新 (F5)：因为 TAB 并没有关闭，因此 memory cache 是可用的，会被优先使用(如果匹配的话)。其次才是 disk cache。</li>
+<li>强制刷新 (Ctrl + F5)：浏览器不使用缓存，因此发送的请求头部均带有 <code>Cache-control: no-cache</code>(为了兼容，还带了 <code>Pragma: no-cache</code>),服务器直接返回 200 和最新内容。</li>
+</ul>
+<p>原文来源：<a href="https://www.jianshu.com/p/54cc04190252">深入理解浏览器的缓存机制</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>浏览器</tag>
+      </tags>
+  </entry>
 </search>
